@@ -33,7 +33,7 @@ const store = configureStore({
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-const clientId = '870765551571-uud4mg0nq91qjvkl3l45refa7hs51f11.apps.googleusercontent.com';
+// const clientId = '870765551571-uud4mg0nq91qjvkl3l45refa7hs51f11.apps.googleusercontent.com';
 
 root.render(
   <React.StrictMode>

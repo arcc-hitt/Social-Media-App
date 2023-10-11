@@ -15,7 +15,7 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
-import { GoogleLogin } from "@react-oauth/google";
+// import { GoogleLogin } from "@react-oauth/google";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -97,41 +97,7 @@ const Form = () => {
       navigate("/home");
     }
   };
-  
-  const googleLoginSuccess = async (response) => {
-    const { tokenId } = response;
-    // console.log(response);
-    // console.log(tokenId);
-
-    try {
-      const googleLoginResponse = await fetch(
-        "http://localhost:3001/auth/google-login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ tokenId }),
-        }
-      );
-
-      if (googleLoginResponse.ok) {
-        const loggedIn = await googleLoginResponse.json();
-        dispatch(
-          setLogin({
-            user: loggedIn.user,
-            token: loggedIn.token,
-          })
-        );
-        navigate("/home");
-      } else {
-        console.error("Google login failed.");
-      }
-    } catch (error) {
-      console.error("Error while logging in with Google:", error);
-    }
-  };
-  
+   
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
@@ -302,10 +268,6 @@ const Form = () => {
                 : "Already have an account? Login here."}
             </Typography>
           </Box>
-          <GoogleLogin // Add GoogleLogin component for login
-              clientId = {process.env.REACT_APP_GOOGLE_CLIENT_ID}
-              onSuccess={googleLoginSuccess}
-          />
         </form>
       )}
     </Formik>
