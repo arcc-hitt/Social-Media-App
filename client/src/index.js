@@ -39,12 +39,10 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistStore(store)}>
-        <GoogleOAuthProvider clientId={clientId}>
+        <GoogleOAuthProvider>
           <App />
         </GoogleOAuthProvider>
       </PersistGate>
     </Provider>
   </React.StrictMode>
 );
-
-console.log(clientId);

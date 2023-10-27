@@ -27,6 +27,18 @@ export const colorTokens = {
     800: "#00353F",
     900: "#001519",
   },
+  login: {
+    bg : "#000000",
+    txt: "#FFFFFF",
+    btnbg: "#e200e2",
+    btnbghover: "#bb00bb",
+    btntxt: "#320032",
+    signup: "#94d3f4",
+    signuphover: "#b8e2f8",
+    textfieldDefault: "#858585",
+    tfhover: "#FFFFFF",
+    tffocus: "#00D5FA"
+  }
 };
 
 // mui theme settings
@@ -77,6 +89,11 @@ export const themeSettings = (mode) => {
     typography: {
       fontFamily: ["Rubik", "sans-serif"].join(","),
       fontSize: 12,
+      login: {
+        fontFamily: ['Tilt Prism', 'sans-serif'].join(","),
+        fontSize: 60,
+        fontWeight: 'bold',
+      },
       h1: {
         fontFamily: ["Rubik", "sans-serif"].join(","),
         fontSize: 40,

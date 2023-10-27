@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import * as React from 'react';
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -15,7 +16,12 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
+import { colorTokens } from "theme";
 // import { GoogleLogin } from "@react-oauth/google";
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import IconButton from '@mui/material/IconButton';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -52,7 +58,7 @@ const Form = () => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isNonMobile = useMediaQuery("(min-width:600px)");
+  const isNonMobile = useMediaQuery("(min-width:920px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 
@@ -104,6 +110,46 @@ const Form = () => {
     if (isRegister) await register(values, onSubmitProps);
   };
 
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+
+  const textFieldStyles = {
+    "& .MuiInputLabel-root": {
+      color: colorTokens.login.textfieldDefault,
+    },
+    "& .MuiInputLabel-root:hover": {
+      "& > fieldset": {
+        Color: colorTokens.login.tfhover,
+      }
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+      "& > fieldset": {
+        Color: colorTokens.login.tffocus,
+      }
+    },
+    "& .MuiOutlinedInput-root": {
+      "& > fieldset": {
+        borderColor: colorTokens.login.textfieldDefault,
+      },
+    },
+    "& .MuiOutlinedInput-root:hover": {
+      "& > fieldset": {
+        borderColor: colorTokens.login.tfhover,
+      }
+    },
+    "& .MuiOutlinedInput-root.Mui-focused": {
+      "& > fieldset": {
+        borderColor: colorTokens.login.tffocus,
+      }
+    },
+  };
+
   return (
     <Formik
       onSubmit={handleFormSubmit}
@@ -120,7 +166,9 @@ const Form = () => {
         setFieldValue,
         resetForm,
       }) => (
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+        >
           <Box
             display="grid"
             gap="30px"
@@ -141,7 +189,13 @@ const Form = () => {
                     Boolean(touched.firstName) && Boolean(errors.firstName)
                   }
                   helperText={touched.firstName && errors.firstName}
-                  sx={{ gridColumn: "span 2" }}
+                  sx={{
+                    gridColumn: "span 2",
+                    ...textFieldStyles,
+                  }}
+                  InputProps={{
+                    style: { color: colorTokens.login.txt },
+                  }}
                 />
                 <TextField
                   label="Last Name"
@@ -151,7 +205,13 @@ const Form = () => {
                   name="lastName"
                   error={Boolean(touched.lastName) && Boolean(errors.lastName)}
                   helperText={touched.lastName && errors.lastName}
-                  sx={{ gridColumn: "span 2" }}
+                  sx={{
+                    gridColumn: "span 2",
+                    ...textFieldStyles,
+                  }}
+                  InputProps={{
+                    style: { color: colorTokens.login.txt },
+                  }}
                 />
                 <TextField
                   label="Location"
@@ -161,7 +221,13 @@ const Form = () => {
                   name="location"
                   error={Boolean(touched.location) && Boolean(errors.location)}
                   helperText={touched.location && errors.location}
-                  sx={{ gridColumn: "span 4" }}
+                  sx={{
+                    gridColumn: "span 4",
+                    ...textFieldStyles,
+                  }}
+                  InputProps={{
+                    style: { color: colorTokens.login.txt },
+                  }}
                 />
                 <TextField
                   label="Occupation"
@@ -173,7 +239,13 @@ const Form = () => {
                     Boolean(touched.occupation) && Boolean(errors.occupation)
                   }
                   helperText={touched.occupation && errors.occupation}
-                  sx={{ gridColumn: "span 4" }}
+                  sx={{
+                    gridColumn: "span 4",
+                    ...textFieldStyles,
+                  }}
+                  InputProps={{
+                    style: { color: colorTokens.login.txt },
+                  }}
                 />
                 <Box
                   gridColumn="span 4"
@@ -197,7 +269,7 @@ const Form = () => {
                       >
                         <input {...getInputProps()} />
                         {!values.picture ? (
-                          <p>Add Picture Here</p>
+                          <p>Upload Your Profile Picture Here</p>
                         ) : (
                           <FlexBetween>
                             <Typography>{values.picture.name}</Typography>
@@ -219,18 +291,43 @@ const Form = () => {
               name="email"
               error={Boolean(touched.email) && Boolean(errors.email)}
               helperText={touched.email && errors.email}
-              sx={{ gridColumn: "span 4" }}
+              sx={{
+                gridColumn: "span 4",
+                ...textFieldStyles,
+              }}
+              InputProps={{
+                style: { color: colorTokens.login.txt },
+              }}
             />
             <TextField
               label="Password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.password}
               name="password"
               error={Boolean(touched.password) && Boolean(errors.password)}
               helperText={touched.password && errors.password}
-              sx={{ gridColumn: "span 4" }}
+              sx={{
+                gridColumn: "span 4",
+                ...textFieldStyles,
+              }}
+              InputProps={{
+                style: { color: colorTokens.login.txt },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      style={{ color: colorTokens.login.txt }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Box>
 
@@ -241,10 +338,14 @@ const Form = () => {
               type="submit"
               sx={{
                 m: "2rem 0",
-                p: "1rem",
-                backgroundColor: palette.primary.main,
-                color: palette.background.alt,
-                "&:hover": { color: palette.primary.main },
+                p: "0.5rem",
+                backgroundColor: colorTokens.login.btnbg,
+                color: colorTokens.login.btntxt,
+                "&:hover": {
+                  color: colorTokens.login.txt,
+                  backgroundColor: colorTokens.login.btnbghover,
+                },
+                fontSize: "1rem",
               }}
             >
               {isLogin ? "LOGIN" : "REGISTER"}
@@ -256,10 +357,10 @@ const Form = () => {
               }}
               sx={{
                 textDecoration: "underline",
-                color: palette.primary.main,
+                color: colorTokens.login.signup,
                 "&:hover": {
                   cursor: "pointer",
-                  color: palette.primary.light,
+                  color: colorTokens.login.signuphover,
                 },
               }}
             >
