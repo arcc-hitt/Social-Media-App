@@ -17,7 +17,6 @@ import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import { colorTokens } from "theme";
-import { GoogleLogin } from "@react-oauth/google";
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -31,21 +30,21 @@ const loginSchema = yup.object().shape({
     .string()
     .email("Invalid email")
     .required("Email is required")
-    .test("valid-domain", "Invalid domain", (value) => {
-      if (!value) return false;
-      const [, domain] = value.split("@");
-      return validDomains.includes(domain);
-    })
+    // .test("valid-domain", "Invalid domain", (value) => {
+    //   if (!value) return false;
+    //   const [, domain] = value.split("@");
+    //   return validDomains.includes(domain);
+    // })
     .matches(/^[^@]+@[^@]+\.[^@]+$/, "Invalid email format")
     .matches(/^[^!#$%^&*()_+{}|<>]+$/, "No special symbols allowed except @"),
   password: yup
     .string()
     .required("Password is required")
-    .test(
-      "isValidPassword",
-      "Invalid password",
-      (value) => value && /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/.test(value)
-    ),
+    // .test(
+    //   "isValidPassword",
+    //   "Invalid password",
+    //   (value) => value && /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/.test(value)
+    // ),
 });
 
 const registerSchema = yup.object().shape({

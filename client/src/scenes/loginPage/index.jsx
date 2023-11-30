@@ -9,24 +9,17 @@ import './RainbowMouseTrail.css';
 const LoginPage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 821px)");
 
-  useEffect(() => {
-    if (!isNonMobileScreens) {
-      // For small devices, set the background image on the html and body elements
-      document.documentElement.style.background = `url('/assets/wp9215875.webp') no-repeat center center fixed`;
-      document.documentElement.style.backgroundSize = "cover";
-      document.body.style.background = "none";
-    } else {
-      // For desktop screens, reset the background to default
-      document.documentElement.style.background = `url('/assets/wp9215875.webp') no-repeat center center fixed`;
-      document.documentElement.style.backgroundSize = "cover";
-      document.body.style.background = "none";
-    }
-  }, [isNonMobileScreens]);
-
-
   return (
     <>
-    <Box>
+    <Box
+        sx={{
+          backgroundImage: `url("/assets/wp9215875.webp")`, // Replace with the path to your background image
+          backgroundSize: "cover", // or "contain", depending on your preference
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          minHeight: "100vh", // Adjust this based on your design
+        }}
+      >
         {isNonMobileScreens ? ( // For desktop devices, grid display
           <Box
             sx={{

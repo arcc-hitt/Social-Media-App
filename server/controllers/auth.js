@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { VerifaliaRestClient } from 'verifalia/node/esm/index.mjs';
 // import { OAuth2Client } from "google-auth-library";
 
 /* REGISTER USER */
@@ -16,6 +17,16 @@ export const register = async (req, res) => {
       location,
       occupation,
     } = req.body;
+
+    const result = await verifalia
+    .emailValidations
+    .submit(email);
+
+    // At this point the address has been validated: let's print
+    // its email validation result to the console.
+
+    const entry = result.entries[0];
+    console.log(`${entry.classification} (${entry.status})`);
 
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);

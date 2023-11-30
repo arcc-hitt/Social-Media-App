@@ -1,16 +1,18 @@
 import {
   ChatBubbleOutlineOutlined,
+  ChatBubbleOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, Typography, TextField, Button, useTheme } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
+import moment from "moment";
 
 const PostWidget = ({
   postId,
@@ -22,6 +24,7 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
+  // createdAt,
 }) => {
   const [isComments, setIsComments] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -87,6 +90,7 @@ const PostWidget = ({
       )}
       <FlexBetween mt="0.25rem">
         <FlexBetween gap="1rem">
+          {/* like button and count */}
           <FlexBetween gap="0.3rem">
             <IconButton onClick={patchLike}>
               {isLiked ? (
@@ -97,56 +101,79 @@ const PostWidget = ({
             </IconButton>
             <Typography>{likeCount}</Typography>
           </FlexBetween>
-
+          
+          {/* comment button and count */}
           <FlexBetween gap="0.3rem">
             <IconButton onClick={() => setIsComments(!isComments)}>
-              <ChatBubbleOutlineOutlined />
+            {isComments ? (
+                <ChatBubbleOutlined sx={{ color: primary }} />
+              ) : (
+                <ChatBubbleOutlineOutlined />
+              )}              
             </IconButton>
             <Typography>{comments.length}</Typography>
           </FlexBetween>
         </FlexBetween>
+
+        {/* share button - functionality to be added */}
         <IconButton>
           <ShareOutlined />
         </IconButton>
       </FlexBetween>
-      {/* {isComments && (
-        <Box mt="0.5rem">
-          {comments.map((comment, i) => (
-            <Box key={`${name}-${i}`}>
-              <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment}
-              </Typography>
-            </Box>
-          ))}
-          <Divider />
-        </Box>
-      )} */}
+
       {isComments && (
-        <div>
+        <Box>
           <Box mt="0.5rem">
             {comments.map((comment, i) => (
               <Box key={`${name}-${i}`}>
                 <Divider />
                 <Typography
-                  sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}
+                  sx={{ color: main, m: "0.5rem 0 0.1rem 0", pl: "1rem", fontSize: "10px" }}
                 >
-                  {comment.commentText} - {comment.userName}
+                  {comment.userName}
+                </Typography>
+                <Typography
+                  sx={{ color: main, m: "0 0 0.5rem 0", pl: "1rem" }}
+                >
+                  {comment.commentText}
                 </Typography>
               </Box>
             ))}
             <Divider />
           </Box>
-          <div>
-            <input
-              type="text"
-              placeholder="Add a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
-            <button onClick={handleAddComment}>Post</button>
-          </div>
-        </div>
+          <FlexBetween mt="0.5rem" gap="1rem">
+              <TextField
+                label="Add a Comment"
+                variant="standard"
+                fullWidth
+                // onBlur={handleBlur}
+                onChange={(e) => setNewComment(e.target.value)}
+                value={newComment}
+                name="addcomment"
+                // error={
+                //   Boolean(touched.firstName) && Boolean(errors.firstName)
+                // }
+                // helperText={touched.firstName && errors.firstName}
+                // sx={{
+                //   gridColumn: "span 2",
+                //   ...textFieldStyles,
+                // }}
+                // InputProps={{
+                //   style: { color: colorTokens.login.txt },
+                // }}
+              />
+
+              <Button
+                onClick={handleAddComment}
+                sx={{
+                  color: palette.background.alt,
+                  backgroundColor: palette.primary.main,
+                }}
+              >
+                POST
+              </Button>
+          </FlexBetween>
+        </Box>
       )}
     </WidgetWrapper>
   );

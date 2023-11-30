@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "free-email-domains": "^1.2.7",
     "is-disposable-email": "^0.0.1",
-    "is-email": "^1.0.2"
+    "is-email": "^1.0.2",
+    "verifalia": "^4.0.0"
   }
 }
