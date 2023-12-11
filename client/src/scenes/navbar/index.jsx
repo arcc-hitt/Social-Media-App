@@ -43,21 +43,17 @@ const Navbar = () => {
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
-      <FlexBetween gap="1.75rem">
-        <Typography
-          fontWeight="bold"
-          fontSize="clamp(1rem, 2rem, 2.25rem)"
-          color="primary"
+      <FlexBetween gap="3rem">
+        <img
           onClick={() => navigate("/home")}
-          sx={{
-            "&:hover": {
-              color: primaryLight,
-              cursor: "pointer",
-            },
+          src="/assets/logo.png"
+          alt="PulseWave Logo"
+          style={{
+            width: "17rem",
+            height: "auto",
+            cursor: "pointer",
           }}
-        >
-          Sociopedia
-        </Typography>
+        />
         {isNonMobileScreens && (
           <FlexBetween
             backgroundColor={neutralLight}
