@@ -23,57 +23,20 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 
 
-const validDomains = ["gmail.com", "example.com"];
+const registerSchema = yup.object().shape({
+  firstName: yup.string().required("required"),
+  lastName: yup.string().required("required"),
+  email: yup.string().email("invalid email").required("required"),
+  password: yup.string().required("required"),
+  location: yup.string().required("required"),
+  occupation: yup.string().required("required"),
+  picture: yup.string().required("required"),
+});
 
 const loginSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Invalid email")
-    .required("Email is required")
-    // .test("valid-domain", "Invalid domain", (value) => {
-    //   if (!value) return false;
-    //   const [, domain] = value.split("@");
-    //   return validDomains.includes(domain);
-    // })
-    .matches(/^[^@]+@[^@]+\.[^@]+$/, "Invalid email format")
-    .matches(/^[^!#$%^&*()_+{}|<>]+$/, "No special symbols allowed except @"),
-  password: yup
-    .string()
-    .required("Password is required")
-    // .test(
-    //   "isValidPassword",
-    //   "Invalid password",
-    //   (value) => value && /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/.test(value)
-    // ),
+  email: yup.string().email("invalid email").required("required"),
+  password: yup.string().required("required"),
 });
-
-const registerSchema = yup.object().shape({
-  firstName: yup.string().required("First name is required"),
-  lastName: yup.string().required("Last name is required"),
-  email: yup
-    .string()
-    .email("Invalid email")
-    .required("Email is required")
-    .test("valid-domain", "Invalid domain", (value) => {
-      if (!value) return false;
-      const [, domain] = value.split("@");
-      return validDomains.includes(domain);
-    })
-    .matches(/^[^@]+@[^@]+\.[^@]+$/, "Invalid email format")
-    .matches(/^[^!#$%^&*()_+{}|<>]+$/, "No special symbols allowed except @"),
-  password: yup
-    .string()
-    .required("Password is required")
-    .min(10, "Password must be at least 10 characters")
-    .matches(
-      /^(?=.*[!@#$%^&*(),.?":{}|<>_-])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
-      "Password must contain at least one special character, one uppercase letter, one lowercase letter, and one number"
-    ),
-  location: yup.string().required("Location is required"),
-  occupation: yup.string().required("Occupation is required"),
-  picture: yup.mixed().required("Profile picture is required"),
-});
-
 
 const initialValuesRegister = {
   firstName: "",
@@ -95,7 +58,7 @@ const Form = () => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isNonMobile = useMediaQuery("(min-width:920px)");
+  const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 

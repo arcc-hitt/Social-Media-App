@@ -24,7 +24,7 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
-  // createdAt,
+  createdAt,
 }) => {
   const [isComments, setIsComments] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -37,6 +37,7 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+  const medium = palette.neutral.medium;
 
   const patchLike = async () => {
     const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
@@ -68,6 +69,25 @@ const PostWidget = ({
     setNewComment(""); // Clear the comment input after adding
   };
 
+  const createdAtMoment = moment(createdAt);
+  const currentMoment = moment();
+
+  let formattedTime;
+
+  const minutesAgo = currentMoment.diff(createdAtMoment, 'minutes');
+  const hoursAgo = currentMoment.diff(createdAtMoment, 'hours');
+  const secondsAgo = currentMoment.diff(createdAtMoment, 'seconds');
+
+  if (hoursAgo > 24) {
+    formattedTime = createdAtMoment.format("MMMM D, YYYY [at] h:mm A");
+  } else if (hoursAgo >= 1) {
+    formattedTime = `${hoursAgo} ${hoursAgo === 1 ? 'hour' : 'hours'} ago`;
+  } else if (minutesAgo >= 1) {
+    formattedTime = `${minutesAgo} ${minutesAgo === 1 ? 'minute' : 'minutes'} ago`;
+  } else {
+    formattedTime = `${secondsAgo} ${secondsAgo === 1 ? 'second' : 'seconds'} ago`;
+  }
+
   return (
     <WidgetWrapper m="2rem 0">
       <Friend
@@ -76,9 +96,11 @@ const PostWidget = ({
         subtitle={location}
         userPicturePath={userPicturePath}
       />
+
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}
       </Typography>
+      
       {picturePath && (
         <img
           width="100%"
@@ -88,6 +110,18 @@ const PostWidget = ({
           src={`http://localhost:3001/assets/${picturePath}`}
         />
       )}
+      
+      <Typography
+        color={medium}
+        fontSize="0.75rem"
+        display="flex"
+        alignItems="end"
+        justifyContent="flex-end"
+        mt="0.25rem"
+      >
+        {formattedTime}
+      </Typography>
+
       <FlexBetween mt="0.25rem">
         <FlexBetween gap="1rem">
           {/* like button and count */}

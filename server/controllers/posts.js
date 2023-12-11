@@ -17,15 +17,6 @@ export const createPost = async (req, res) => {
       likes: {},
       comments: [],
     });
-
-    // if (commentText) {
-    //   newPost.comments.push({
-    //     userId,
-    //     userName: `${user.firstName} ${user.lastName}`,
-    //     commentText,
-    //   });
-    // }
-
     await newPost.save();
 
     const post = await Post.find();
@@ -78,37 +69,5 @@ export const likePost = async (req, res) => {
     res.status(200).json(updatedPost);
   } catch (err) {
     res.status(404).json({ message: err.message });
-  }
-};
-
-export const addCommentToPost = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { userId, commentText } = req.body;
-
-    const post = await Post.findById(id);
-
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const newComment = {
-      userId,
-      userName: `${user.firstName} ${user.lastName}`,
-      commentText,
-    };
-
-    post.comments.push(newComment);
-    await post.save();
-
-    res.status(200).json(post);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
   }
 };
