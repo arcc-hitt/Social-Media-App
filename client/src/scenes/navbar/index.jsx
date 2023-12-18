@@ -1,12 +1,6 @@
-import { useState } from "react";
 import {
   Box,
-  IconButton,
-  InputBase,
   Typography,
-  Select,
-  MenuItem,
-  FormControl,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
@@ -16,177 +10,178 @@ import {
   DarkMode,
   LightMode,
   Notifications,
-  Help,
-  Menu,
-  Close,
+  Home,
+  Logout,
 } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
-import FlexBetween from "components/FlexBetween";
+import { useState } from "react";
+import UserImage from "components/UserImage";
 
-const Navbar = () => {
-  const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+const Navbar = ({ userId, picturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
-  const neutralLight = theme.palette.neutral.light;
-  const dark = theme.palette.neutral.dark;
+  const nuetralDark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  const fullName = `${user.firstName} ${user.lastName}`;
+  const menuItemStyles = {
+    display: "flex",
+    flexDirection: "row",
+    gap: "1rem",
+    alignItems: "center",
+    padding: "0.5rem",
+    margin: "0rem",
+    cursor: "pointer",
+    width: "100%",
+    borderRadius: "5px",
+    '&:hover': {
+      bgcolor: alt,
+    },
+  };
+
+  const menuItemMobileStyles = {
+    ...menuItemStyles,
+    borderRadius: "0px",
+    justifyContent: "center",
+  };
+
+  const menuItems = isNonMobileScreens
+    ? [
+        { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => navigate("/home") },
+        { icon: <Search sx={{ fontSize: "25px" }} />, text: "Search" },
+        {
+          icon: theme.palette.mode === "dark" ? (
+            <DarkMode sx={{ fontSize: "25px" }} />
+          ) : (
+            <LightMode sx={{ color: nuetralDark, fontSize: "25px" }} />
+          ),
+          text: "Theme",
+          onClick: () => dispatch(setMode()),
+        },
+        { icon: <Message sx={{ fontSize: "25px" }} />, text: "Messages" },
+        { icon: <Notifications sx={{ fontSize: "25px" }} />, text: "Notifications" },
+        {
+          icon: <UserImage image={picturePath} size="25px" />,
+          text: "My Profile",
+          onClick: () => {
+            navigate(`/profile/${userId}`);
+            navigate(0);
+          },
+        },
+        { icon: <Logout sx={{ fontSize: "25px" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
+      ]
+    : [
+        { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => navigate("/home") },
+        { icon: <Search sx={{ fontSize: "25px" }} />, text: "Search" },
+        {
+          icon: theme.palette.mode === "dark" ? (
+            <DarkMode sx={{ fontSize: "25px" }} />
+          ) : (
+            <LightMode sx={{ color: nuetralDark, fontSize: "25px" }} />
+          ),
+          text: "Theme",
+          onClick: () => dispatch(setMode()),
+        },
+        {
+          icon: <UserImage image={picturePath} size="25px" />,
+          text: "My Profile",
+          onClick: () => {
+            navigate(`/profile/${userId}`);
+            navigate(0);
+          },
+        },
+        { icon: <Logout sx={{ fontSize: "25px" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
+      ];
 
   return (
-    <FlexBetween padding="1rem 6%" backgroundColor={alt}>
-      <FlexBetween gap="3rem">
-        <img
-          onClick={() => navigate("/home")}
-          src="/assets/logo.png"
-          alt="PulseWave Logo"
-          style={{
-            width: "17rem",
-            height: "auto",
-            cursor: "pointer",
-          }}
-        />
-        {isNonMobileScreens && (
-          <FlexBetween
-            backgroundColor={neutralLight}
-            borderRadius="9px"
-            gap="3rem"
-            padding="0.1rem 1.5rem"
-          >
-            <InputBase placeholder="Search..." />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween>
-        )}
-      </FlexBetween>
-
-      {/* DESKTOP NAV */}
+    <Box
+      backgroundColor={background}
+      height={isNonMobileScreens ? "100vh" : "auto"}
+      position={isNonMobileScreens ? "fixed" : "static"}
+      bottom={isNonMobileScreens ? "0" : "auto"}
+      width={isNonMobileScreens ? "15%" : "100%"}
+      zIndex="10"
+      display={isNonMobileScreens ? "flex" : "block"}
+      flexDirection={isNonMobileScreens ? "column" : "row"}
+      sx={{
+        borderRight: `1px solid ${theme.palette.neutral.medium}`,
+      }}
+    >
       {isNonMobileScreens ? (
-        <FlexBetween gap="2rem">
-          <IconButton onClick={() => dispatch(setMode())}>
-            {theme.palette.mode === "dark" ? (
-              <DarkMode sx={{ fontSize: "25px" }} />
-            ) : (
-              <LightMode sx={{ color: dark, fontSize: "25px" }} />
-            )}
-          </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} />
-          <FormControl variant="standard" value={fullName}>
-            <Select
-              value={fullName}
-              sx={{
-                backgroundColor: neutralLight,
-                width: "150px",
-                borderRadius: "0.25rem",
-                p: "0.25rem 1rem",
-                "& .MuiSvgIcon-root": {
-                  pr: "0.25rem",
-                  width: "3rem",
-                },
-                "& .MuiSelect-select:focus": {
-                  backgroundColor: neutralLight,
-                },
-              }}
-              input={<InputBase />}
-            >
-              <MenuItem value={fullName}>
-                <Typography>{fullName}</Typography>
-              </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
-            </Select>
-          </FormControl>
-        </FlexBetween>
-      ) : (
-        <IconButton
-          onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
-        >
-          <Menu />
-        </IconButton>
-      )}
-
-      {/* MOBILE NAV */}
-      {!isNonMobileScreens && isMobileMenuToggled && (
+        // Desktop Navbar
         <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="flex-start"
+          gap="2rem"
           position="fixed"
-          right="0"
-          bottom="0"
-          height="100%"
-          zIndex="10"
-          maxWidth="500px"
-          minWidth="300px"
-          backgroundColor={background}
+          padding="2rem 0rem 2rem 2rem"
+          height="100vh"
         >
-          {/* CLOSE ICON */}
-          <Box display="flex" justifyContent="flex-end" p="1rem">
-            <IconButton
-              onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
-            >
-              <Close />
-            </IconButton>
+          <img
+            onClick={() => navigate("/home")}
+            src="/assets/logo.png"
+            alt="PulseWave Logo"
+            style={{
+              width: "10rem",
+              height: "auto",
+              cursor: "pointer",
+              marginBottom: "1rem",
+            }}
+          />
+          {/* Logo...Notifications */}
+          <Box display="flex" flexDirection="column" gap="2rem" width="100%">
+            {menuItems.slice(0, 5).map((item, index) => (
+              <Box key={index} onClick={item.onClick} sx={menuItemStyles}>
+                {item.icon}
+                <Typography>{item.text}</Typography>
+              </Box>
+            ))}
           </Box>
 
-          {/* MENU ITEMS */}
-          <FlexBetween
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            gap="3rem"
-          >
-            <IconButton
-              onClick={() => dispatch(setMode())}
-              sx={{ fontSize: "25px" }}
-            >
-              {theme.palette.mode === "dark" ? (
-                <DarkMode sx={{ fontSize: "25px" }} />
-              ) : (
-                <LightMode sx={{ color: dark, fontSize: "25px" }} />
-              )}
-            </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
-            <Help sx={{ fontSize: "25px" }} />
-            <FormControl variant="standard" value={fullName}>
-              <Select
-                value={fullName}
-                sx={{
-                  backgroundColor: neutralLight,
-                  width: "150px",
-                  borderRadius: "0.25rem",
-                  p: "0.25rem 1rem",
-                  "& .MuiSvgIcon-root": {
-                    pr: "0.25rem",
-                    width: "3rem",
-                  },
-                  "& .MuiSelect-select:focus": {
-                    backgroundColor: neutralLight,
-                  },
-                }}
-                input={<InputBase />}
-              >
-                <MenuItem value={fullName}>
-                  <Typography>{fullName}</Typography>
-                </MenuItem>
-                <MenuItem onClick={() => dispatch(setLogout())}>
-                  Log Out
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </FlexBetween>
+          {/* Profile and Logout */}
+          <Box display="flex" flexDirection="column" gap="2rem" width="100%" marginTop="auto">
+            {menuItems.slice(5).map((item, index) => (
+              <Box key={index} onClick={item.onClick} sx={menuItemStyles}>
+                {item.icon}
+                <Typography>{item.text}</Typography>
+              </Box>
+            ))}
+          </Box>
         </Box>
+      ) : (
+          // Mobile Navbar
+          <Box
+            position="fixed"
+            bottom="0"
+            width="100%"
+            backgroundColor={background}
+            borderTop={`1px solid ${theme.palette.neutral.medium}`}
+            zIndex="10"
+            display="flex"
+            justifyContent="space-around"
+          >
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="space-around"
+              alignItems="center"
+              width="100%"
+            >
+              {menuItems.slice(0, 5).map((item, index) => (
+                <Box key={index} onClick={item.onClick} sx={menuItemMobileStyles}>
+                  {item.icon}
+                </Box>
+              ))}
+            </Box>
+          </Box>
       )}
-    </FlexBetween>
+    </Box>
   );
 };
 
