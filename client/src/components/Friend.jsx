@@ -47,12 +47,12 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           }}
         >
           <Typography
-            color={main}
+            color={palette.neutral.dark}
             variant="h5"
             fontWeight="500"
             sx={{
               "&:hover": {
-                color: palette.primary.light,
+                color: palette.primary.main,
                 cursor: "pointer",
               },
             }}

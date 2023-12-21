@@ -4,7 +4,6 @@ import Form from "./Form";
 import { colorTokens } from "theme";
 import RainbowMouseTrail from './RainbowMouseTrail';
 import './RainbowMouseTrail.css';
-// import _ from 'lodash';
 
 const LoginPage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 821px)");
@@ -13,11 +12,11 @@ const LoginPage = () => {
     <>
     <Box
         sx={{
-          backgroundImage: `url("/assets/wp9215875.webp")`, // Replace with the path to your background image
-          backgroundSize: "cover", // or "contain", depending on your preference
+          backgroundImage: `url("/assets/wp9215875.webp")`,
+          backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          minHeight: "100vh", // Adjust this based on your design
+          minHeight: "100vh",
         }}
       >
         {isNonMobileScreens ? ( // For desktop devices, grid display

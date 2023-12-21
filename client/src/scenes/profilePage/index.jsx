@@ -12,7 +12,7 @@ const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const { userId } = useParams();
   const token = useSelector((state) => state.token);
-  const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const isNonMobileScreens = useMediaQuery("(min-width:821px)");
 
   const getUser = async () => {
     const response = await fetch(`http://localhost:3001/users/${userId}`, {
@@ -33,7 +33,7 @@ const ProfilePage = () => {
     <Box>
       <Box
         width="100%"
-        padding="2rem 2rem 2rem 0rem"
+        padding={isNonMobileScreens ? "2rem 2rem 2rem 0rem" : "2rem"}
         display={isNonMobileScreens ? "flex" : "block"}
         gap="2rem"
         justifyContent="space-between"

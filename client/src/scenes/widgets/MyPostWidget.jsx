@@ -57,6 +57,17 @@ const MyPostWidget = ({ picturePath }) => {
     setPost("");
   };
 
+  const postOptionStyles = {
+    color: medium,
+    borderRadius: "5px",
+    "&:hover": {
+      cursor: "pointer",
+      backgroundColor: palette.neutral.light,
+      padding: "0.5rem",
+      color: palette.neutral.dark,
+    },
+  };
+
   return (
     <WidgetWrapper>
       <FlexBetween gap="1.5rem">
@@ -68,8 +79,8 @@ const MyPostWidget = ({ picturePath }) => {
           sx={{
             width: "100%",
             backgroundColor: palette.neutral.light,
-            borderRadius: "2rem",
-            padding: "1rem 2rem",
+            borderRadius: "1rem",
+            padding: "1rem 1rem",
           }}
         />
       </FlexBetween>
@@ -121,31 +132,29 @@ const MyPostWidget = ({ picturePath }) => {
       <Divider sx={{ margin: "1.25rem 0" }} />
 
       <FlexBetween>
-        <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-          <ImageOutlined sx={{ color: mediumMain }} />
-          <Typography
-            color={mediumMain}
-            sx={{ "&:hover": { cursor: "pointer", color: medium } }}
-          >
-            Image
-          </Typography>
+        <FlexBetween
+          gap="0.25rem"
+          onClick={() => setIsImage(!isImage)}
+          sx={ postOptionStyles }>
+          <ImageOutlined />
+          <Typography> Image </Typography>
         </FlexBetween>
 
         {isNonMobileScreens ? (
           <>
-            <FlexBetween gap="0.25rem">
-              <GifBoxOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Clip</Typography>
+            <FlexBetween gap="0.25rem" sx={ postOptionStyles }>
+              <GifBoxOutlined />
+              <Typography>Clip</Typography>
             </FlexBetween>
 
-            <FlexBetween gap="0.25rem">
-              <AttachFileOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Attachment</Typography>
+            <FlexBetween gap="0.25rem" sx={ postOptionStyles }>
+              <AttachFileOutlined />
+              <Typography>Attachment</Typography>
             </FlexBetween>
 
-            <FlexBetween gap="0.25rem">
-              <MicOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Audio</Typography>
+            <FlexBetween gap="0.25rem" sx={ postOptionStyles }>
+              <MicOutlined />
+              <Typography>Audio</Typography>
             </FlexBetween>
           </>
         ) : (
@@ -158,9 +167,13 @@ const MyPostWidget = ({ picturePath }) => {
           disabled={!post}
           onClick={handlePost}
           sx={{
-            color: palette.background.alt,
+            color: palette.neutral.light,
             backgroundColor: palette.primary.main,
             borderRadius: "1rem",
+            '&:hover' : {
+              color: palette.neutral.dark,
+              backgroundColor: palette.primary.light,
+            }
           }}
         >
           POST
