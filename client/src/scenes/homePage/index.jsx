@@ -5,6 +5,8 @@ import Navbar from "scenes/navbar";
 import UserWidget from "scenes/widgets/UserWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
+import StoriesWidget from "scenes/widgets/StoriesWidget";
+import MyStoryWidget from "scenes/widgets/MyStoryWidget";
 import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 
@@ -26,11 +28,19 @@ const HomePage = () => {
       >
         <Box flexBasis={isNonMobileScreens ? "15%" : "100%"}>
           <Navbar userId={_id} picturePath={displayedPicturePath}/>
+        </Box>        
+
+        <Box flexBasis={isNonMobileScreens ? "45%" : "100%"}>
+          <Box>
+            {/* <MyStoryWidget picturePath={picturePath} /> */}
+            <StoriesWidget userId={_id} picturePath={picturePath} />
+          </Box>
+          <Box>
+            <MyPostWidget picturePath={picturePath} />
+            <PostsWidget userId={_id} />
+          </Box>
         </Box>
-        <Box flexBasis={isNonMobileScreens ? "40%" : "100%"} >
-          <MyPostWidget picturePath={picturePath} />
-          <PostsWidget userId={_id} />
-        </Box>
+
         {isNonMobileScreens && (
           <Box flexBasis="20%">
             {/* <AdvertWidget /> */}
