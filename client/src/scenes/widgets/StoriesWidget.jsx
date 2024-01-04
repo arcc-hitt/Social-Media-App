@@ -1,7 +1,8 @@
-import { Stack, Box, IconButton, Slide, Modal } from '@mui/material';
-import { NavigateBefore, NavigateNext, Close } from '@mui/icons-material';
+import { Stack, Box, IconButton, Slide } from '@mui/material';
+import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSwipeable } from 'react-swipeable';
 import { setStories } from "state";
 import WidgetWrapper from "components/WidgetWrapper";
 import StoryWidget from "./StoryWidget";
@@ -9,7 +10,7 @@ import MyStoryWidget from './MyStoryWidget';
 import StoryModal from './StoryModal';
 
 
-const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
+const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
   const dispatch = useDispatch();
   const stories = useSelector((state) => state.stories);
   const token = useSelector((state) => state.token);
@@ -20,18 +21,16 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
   const containerRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalUserId, setModalUserId] = useState(null);
-  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const handleModalOpen = (userId) => {
     setModalOpen(true);
     setModalUserId(userId);
-    // setSelectedUserId(userId);
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
   };
-  
+
   const uniqueUserStories = Object.values(
     stories.reduce((acc, story) => {
       if (!acc[story.userId]) {
@@ -40,6 +39,8 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
       return acc;
     }, {})
   );
+
+  const currentUserStory = uniqueUserStories.some((story) => story.userId === userId);
 
   const getStories = async () => {
     const response = await fetch("http://localhost:3001/stories", {
@@ -61,7 +62,7 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
     const data = await response.json();
     dispatch(setStories({ stories: data }));
   };
-  
+
   useEffect(() => {
     if (isProfile) {
       getUserStories();
@@ -70,7 +71,8 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const storiesPerPage = 3;
+  const cardsPerPage = 4;
+  const storiesPerPage = cardsPerPage - 1;
   const totalPages = Math.ceil(uniqueUserStories.length / storiesPerPage);
 
   const startIdx = currentPage * storiesPerPage;
@@ -86,9 +88,17 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
     setSlideDirection("right");
   };
 
+  const handlers = useSwipeable({
+    onSwipedLeft: () => handleNextPage(),
+    onSwipedRight: () => handlePrevPage(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
+  });
+
   return (
     <>
-    <WidgetWrapper m="2rem 0">
+      <WidgetWrapper>
+      <div {...handlers}>
         <Box
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -118,9 +128,6 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
             spacing={1}
             width="100%"
           >
-            <Box>
-              <MyStoryWidget picturePath={picturePath}/>
-            </Box>
             <Box
               sx={{
                 display: 'flex',
@@ -129,8 +136,61 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
               }}
               ref={containerRef}
             >
-              {uniqueUserStories.slice(startIdx, endIdx).map(
-                (story, index) => (
+              {/* Render MyStoryWidget components */}
+              {!currentUserStory ? (
+                userId && (
+                  <Slide
+                    direction={slideDirection}
+                    in={true}
+                    container={containerRef.current}
+                  >
+                    <Stack
+                      direction="row"
+                      justifyContent="space-around"
+                      alignItems="center"
+                      spacing={1}
+                    >
+                      <MyStoryWidget
+                        picturePath={userPicturePath}
+                        userPicturePath={userPicturePath}
+                        currentUserStory={currentUserStory}
+                      />
+                    </Stack>
+                  </Slide>
+                )
+              ) : (
+                uniqueUserStories
+                  .filter((story) => story.userId === userId)
+                  .map((story) => (
+                    <Slide
+                      key={story._id}
+                      direction={slideDirection}
+                      in={true}
+                      container={containerRef.current}
+                    >
+                      <Stack
+                        direction="row"
+                        justifyContent="space-around"
+                        alignItems="center"
+                        spacing={1}
+                        style={{ width: `${100 / cardsPerPage}%` }}
+                      >
+                        <MyStoryWidget
+                          picturePath={story.picturePath}
+                          userPicturePath={story.userPicturePath}
+                          currentUserStory={currentUserStory}
+                          onImageClick={() => handleModalOpen(story.userId)}
+                        />
+                      </Stack>
+                    </Slide>
+                  ))
+              )}
+
+              {/* Render other StoryWidget components */}
+              {uniqueUserStories
+                .filter((story) => story.userId !== userId)
+                .slice(startIdx, endIdx)
+                .map((story) => (
                   <Slide
                     key={story._id}
                     direction={slideDirection}
@@ -143,7 +203,7 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
                       alignItems="center"
                       spacing={1}
                       style={{ width: `${100 / storiesPerPage}%` }}
-                      onClick={ () => handleModalOpen(story.userId)}
+                      onClick={() => handleModalOpen(story.userId)}
                     >
                       <StoryWidget
                         storyId={story._id}
@@ -159,35 +219,35 @@ const StoriesWidget = ({ userId, isProfile = false, picturePath }) => {
                       />
                     </Stack>
                   </Slide>
-                )
-              )}
-              </Box>
-            </Stack>
+                ))
+              }
+            </Box>
+          </Stack>
 
-            <IconButton
-              onClick={handleNextPage}
-              sx={{
-                visibility: isHovered ? "visible" : "hidden",
-                position: "absolute",
-                right: 0,
-                top: "50%",
-                transform: "translateY(-50%)",
-              }}
-            >
+          <IconButton
+            onClick={handleNextPage}
+            sx={{
+              visibility: isHovered ? "visible" : "hidden",
+              position: "absolute",
+              right: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+            }}
+          >
             <NavigateNext />
           </IconButton>
         </Box>
+      </div>
       </WidgetWrapper>
-      {modalOpen && (
+      {modalOpen && currentUserStory && (
         <StoryModal
           stories={stories}
           open={modalOpen}
           onClose={handleModalClose}
-          // selectedUserId={selectedUserId}
           initialUserId={modalUserId}
-      />
+        />
       )}
-      
+
     </>
   );
 };

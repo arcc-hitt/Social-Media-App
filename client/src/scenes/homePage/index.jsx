@@ -20,7 +20,7 @@ const HomePage = () => {
     <Box>
       <Box
         width="100%"
-        padding={isNonMobileScreens ? "2rem 2rem 2rem 0rem" : "2rem"}
+        padding={isNonMobileScreens ? "2rem 2rem 2rem 0rem" : "1rem"}
         display={isNonMobileScreens ? "flex" : "block"}
         flexDirection={isNonMobileScreens ? "row" : "column"}
         gap="0.5rem"
@@ -33,7 +33,7 @@ const HomePage = () => {
         <Box flexBasis={isNonMobileScreens ? "45%" : "100%"}>
           <Box>
             {/* <MyStoryWidget picturePath={picturePath} /> */}
-            <StoriesWidget userId={_id} picturePath={picturePath} />
+            <StoriesWidget userId={_id} userPicturePath={displayedPicturePath} />
           </Box>
           <Box>
             <MyPostWidget picturePath={picturePath} />
