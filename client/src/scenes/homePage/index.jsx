@@ -14,8 +14,6 @@ const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
 
-  const [displayedPicturePath, setDisplayedPicturePath] = useState(picturePath);
-
   return (
     <Box>
       <Box
@@ -26,14 +24,14 @@ const HomePage = () => {
         gap="0.5rem"
         justifyContent="space-between"
       >
-        <Box flexBasis={isNonMobileScreens ? "15%" : "100%"}>
-          <Navbar userId={_id} picturePath={displayedPicturePath}/>
+        <Box flexBasis={isNonMobileScreens ? "15%" : "100%"} mb="2rem">
+          <Navbar userId={_id} picturePath={picturePath}/>
         </Box>        
 
         <Box flexBasis={isNonMobileScreens ? "45%" : "100%"}>
           <Box>
             {/* <MyStoryWidget picturePath={picturePath} /> */}
-            <StoriesWidget userId={_id} userPicturePath={displayedPicturePath} />
+            <StoriesWidget userId={_id} userPicturePath={picturePath} />
           </Box>
           <Box>
             <MyPostWidget picturePath={picturePath} />
@@ -44,7 +42,7 @@ const HomePage = () => {
         {isNonMobileScreens && (
           <Box flexBasis="20%">
             {/* <AdvertWidget /> */}
-            <UserWidget userId={_id} picturePath={displayedPicturePath} setDisplayedPicturePath={setDisplayedPicturePath} />
+            <UserWidget userId={_id} picturePath={picturePath} />
             <Box m="2rem 0" />
             <FriendListWidget userId={_id} />
           </Box>

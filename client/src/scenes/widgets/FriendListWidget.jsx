@@ -42,7 +42,7 @@ const FriendListWidget = ({ userId }) => {
           <Friend
             key={friend._id}
             friendId={friend._id}
-            name={`${friend.firstName} ${friend.lastName}`}
+            userName={friend.userName}
             subtitle={friend.occupation}
             userPicturePath={friend.picturePath}
           />

@@ -10,6 +10,7 @@ import UserWidget from "scenes/widgets/UserWidget";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
+  const { _id, picturePath } = useSelector((state) => state.user);
   const { userId } = useParams();
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:821px)");
@@ -35,19 +36,18 @@ const ProfilePage = () => {
         width="100%"
         padding={isNonMobileScreens ? "2rem 2rem 2rem 0rem" : "2rem"}
         display={isNonMobileScreens ? "flex" : "block"}
-        gap="2rem"
-        justifyContent="space-between"
+        justifyContent="space-around"
       > 
-        <Box flexBasis={isNonMobileScreens ? "15%" : undefined}>
-          <Navbar picturePath={user.picturePath} />
+        <Box flexBasis={isNonMobileScreens ? "15%" : undefined} mb="2rem">
+          <Navbar userId={_id} picturePath={picturePath} />
         </Box>
-        <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
+        <Box flexBasis={isNonMobileScreens ? "22%" : undefined}>
           <UserWidget userId={userId} picturePath={user.picturePath} />
           <Box m="2rem 0" />
           <FriendListWidget userId={userId} />
         </Box>
         <Box
-          flexBasis={isNonMobileScreens ? "45%" : undefined}
+          flexBasis={isNonMobileScreens ? "43%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
           <MyPostWidget picturePath={user.picturePath} />

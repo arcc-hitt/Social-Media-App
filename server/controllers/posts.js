@@ -11,6 +11,7 @@ export const createPost = async (req, res) => {
       firstName: user.firstName,
       lastName: user.lastName,
       location: user.location,
+      userName: user.userName,
       description,
       userPicturePath: user.picturePath,
       picturePath,
@@ -83,7 +84,7 @@ export const addComment = async (req, res) => {
 
     const newComment = {
       userId,
-      userName: `${user.firstName} ${user.lastName}`,
+      userName: `${user.userName}`,
       commentText,
     };
 

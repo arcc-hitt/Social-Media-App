@@ -18,6 +18,7 @@ const PostWidget = ({
   postId,
   postUserId,
   name,
+  userName,
   description,
   location,
   picturePath,
@@ -93,6 +94,7 @@ const PostWidget = ({
       <Friend
         friendId={postUserId}
         name={name}
+        userName={userName}
         subtitle={location}
         userPicturePath={userPicturePath}
       />

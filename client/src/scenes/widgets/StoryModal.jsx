@@ -176,7 +176,6 @@ const StoryModal = ({
           <IconButton
             onClick={handlePrevPage}
             sx={{
-              // visibility: isHovered ? "visible" : "hidden",
               position: "absolute",
               left: 0,
               top: "50%",
@@ -229,7 +228,6 @@ const StoryModal = ({
           <IconButton
             onClick={handleNextPage}
             sx={{
-              // visibility: isHovered ? "visible" : "hidden",
               position: "absolute",
               right: 0,
               top: "50%",

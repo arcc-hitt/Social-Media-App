@@ -1,8 +1,15 @@
 import {
   Box,
-  Typography,
   useTheme,
   useMediaQuery,
+  ListItem,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Drawer,
+  Toolbar,
+  Tooltip,
 } from "@mui/material";
 import {
   Search,
@@ -18,19 +25,28 @@ import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import UserImage from "components/UserImage";
+import SearchDrawer from "components/SearchDrawer";
 
 const Navbar = ({ userId, picturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isNonMobileScreens = useMediaQuery("(min-width: 821px)");
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
   const nuetralDark = theme.palette.neutral.dark;
-  const nuetralMain = theme.palette.neutral.main;
   const background = theme.palette.background.default;
   const alt = theme.palette.background.alt;
 
   const [selectedMenuItem, setSelectedMenuItem] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const handleSearchOpen = () => {
+    setOpen(!open);
+  };
+
+  const handleSearchClose = () => {
+    setOpen(false);
+  };
 
   const handleMenuItemClick = (index, onClick) => {
     setSelectedMenuItem(index);
@@ -38,14 +54,6 @@ const Navbar = ({ userId, picturePath }) => {
   };
 
   const menuItemStyles = {
-    display: "flex",
-    flexDirection: "row",
-    gap: "1rem",
-    alignItems: "center",
-    padding: "0.5rem",
-    margin: "0rem",
-    cursor: "pointer",
-    width: "100%",
     borderRadius: "5px",
     color: nuetralDark,
     '&:hover': {
@@ -56,134 +64,241 @@ const Navbar = ({ userId, picturePath }) => {
     },
   };
 
-  const menuItemMobileStyles = {
-    ...menuItemStyles,
-    borderRadius: "0px",
-    justifyContent: "center",
-  };
-
   const menuItems = isNonMobileScreens
     ? [
-        { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => navigate("/home") },
-        { icon: <Search sx={{ fontSize: "25px" }} />, text: "Search", onClick: () => alert("Will be updated soon...") },
-        {
-          icon: theme.palette.mode === "dark" ? (
-            <DarkMode sx={{ fontSize: "25px" }} />
-          ) : (
-            <LightMode sx={{ fontSize: "25px" }} />
-          ),
-          text: "Theme",
-          onClick: () => dispatch(setMode()),
+      { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => { navigate("/home"); setOpen(false); } },
+      { icon: <Search sx={{ fontSize: "25px" }} />, text: "Search", onClick: handleSearchOpen },
+      {
+        icon: theme.palette.mode === "dark" ? (
+          <DarkMode sx={{ fontSize: "25px" }} />
+        ) : (
+          <LightMode sx={{ fontSize: "25px" }} />
+        ),
+        text: "Theme",
+        onClick: () => dispatch(setMode()),
+      },
+      { icon: <Message sx={{ fontSize: "25px" }} />, text: "Messages", onClick: () => { } },
+      { icon: <Notifications sx={{ fontSize: "25px" }} />, text: "Notifications", onClick: () => { } },
+      {
+        icon: <UserImage image={picturePath} size="25px" />,
+        text: "My Profile",
+        onClick: () => {
+          navigate(`/profile/${userId}`);
+          navigate(0);
         },
-        { icon: <Message sx={{ fontSize: "25px" }} />, text: "Messages", onClick: () => alert("Will be updated soon...") },
-        { icon: <Notifications sx={{ fontSize: "25px" }} />, text: "Notifications", onClick: () => alert("Will be updated soon...") },
-        {
-          icon: <UserImage image={picturePath} size="25px" />,
-          text: "My Profile",
-          onClick: () => {
-            navigate(`/profile/${userId}`);
-          },
-        },
-        { icon: <Logout sx={{ fontSize: "25px" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
-      ]
+      },
+      { icon: <Logout sx={{ fontSize: "25px" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
+    ]
     : [
-        { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => navigate("/home") },
-        { icon: <Search sx={{ fontSize: "25px" }} />, text: "Search", onClick: () => alert("Will be updated soon...") },
-        {
-          icon: theme.palette.mode === "dark" ? (
-            <DarkMode sx={{ fontSize: "25px" }} />
-          ) : (
-            <LightMode sx={{ color: nuetralDark, fontSize: "25px" }} />
-          ),
-          text: "Theme",
-          onClick: () => dispatch(setMode()),
+      { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => { navigate("/home"); setOpen(!open); } },
+      { icon: <Search sx={{ fontSize: "25px" }} />, text: "Search", onClick: handleSearchOpen },
+      {
+        icon: theme.palette.mode === "dark" ? (
+          <DarkMode sx={{ fontSize: "25px" }} />
+        ) : (
+          <LightMode sx={{ color: nuetralDark, fontSize: "25px" }} />
+        ),
+        text: "Theme",
+        onClick: () => dispatch(setMode()),
+      },
+      {
+        icon: <UserImage image={picturePath} size="25px" />,
+        text: "My Profile",
+        onClick: () => {
+          navigate(`/profile/${userId}`)
+          navigate(0);
         },
-        {
-          icon: <UserImage image={picturePath} size="25px" />,
-          text: "My Profile",
-          onClick: () => {
-            navigate(`/profile/${userId}`);
-          },
-        },
-        { icon: <Logout sx={{ fontSize: "25px" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
-      ];
+      },
+      { icon: <Logout sx={{ fontSize: "25px" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
+      { icon: <Notifications sx={{ fontSize: "23px" }} />, text: "Notifications", onClick: () => { } },
+      { icon: <Message sx={{ fontSize: "23px" }} />, text: "Messages", onClick: () => { } },
+    ];
 
   return (
     <div>
       {isNonMobileScreens ? (
         // Desktop Navbar
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="flex-start"
-          justifyContent="space-around"
-          gap="2rem"
-          position="fixed"
-          padding="2rem 2rem 2rem 2rem"
-          height="100vh"
-          backgroundColor={background}
-          top={0}
-          sx={{
-            borderRight: `1px solid ${theme.palette.neutral.medium}`,
-          }}
-        >
-          <img
-            onClick={() => navigate("/home")}
-            src="/assets/logo.png"
-            alt="PulseWave Logo"
-            style={{
-              width: "10rem",
-              height: "auto",
-              cursor: "pointer",
-              marginBottom: "1rem",
+        <Box sx={{ display: 'flex' }}>
+          <Drawer
+            sx={{
+              width: open ? '6%' : '15%',
+              flexShrink: 0,
+              '& .MuiDrawer-paper': {
+                width: open ? '6%' : '15%',
+                boxSizing: 'border-box',
+                backgroundColor: background,
+              },
             }}
-          />
-          {/* Logo...Notifications */}
-          <Box display="flex" flexDirection="column" gap="2rem" width="100%">
-            {menuItems.slice(0, 5).map((item, index) => (
-                <Box
+            variant="permanent"
+            anchor="left"
+          >
+            {/* Logo */}
+            <Toolbar
+              sx={{
+                height: "auto",
+                cursor: "pointer",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                onClick={() => navigate("/home")}
+                src={open ? "/assets/logo-icon-white.png" : "/assets/logo.png"}
+                alt="PulseWave Logo"
+                width='100%'
+              />
+            </Toolbar>
+
+            {/* Home ... Notifications */}
+            <List>
+              {menuItems.slice(0, 5).map((item, index) => (
+                <ListItem
                   key={index}
                   onClick={() => {
                     handleMenuItemClick(index, item.onClick);
                   }}
-                  sx={{
-                    ...menuItemStyles,
-                    bgcolor: selectedMenuItem === index ? alt : "inherit",                    
-                    '& > *': {
-                      fontWeight: selectedMenuItem === index ? "bold" : "normal",
-                    },               
+                >
+                  {item.text === "Messages" || item.text === "Notifications" ? (
+                    <Tooltip title='Will update soon...' placement="bottom">
+                      <ListItemButton sx={{...menuItemStyles,}}>
+                        <ListItemIcon
+                          sx={{
+                            '&.MuiListItemIcon-root': {
+                              m: 0,
+                              p: 0,
+                            }
+                          }}
+                        >
+                          {item.icon}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={open ? null : item.text}
+                          primaryTypographyProps={{
+                            color: nuetralDark,
+                            fontSize: 16,
+                          }}
+                        />
+                      </ListItemButton>
+                    </Tooltip>
+                  ) : (
+                    <ListItemButton sx={{...menuItemStyles,}}>
+                      <ListItemIcon
+                        sx={{
+                          '&.MuiListItemIcon-root': {
+                            m: 0,
+                            p: 0,
+                          }
+                        }}
+                      >
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={open ? null : item.text}
+                        primaryTypographyProps={{
+                          color: nuetralDark,
+                          fontSize: 16,
+                        }}
+                      />
+                    </ListItemButton>
+                  )}
+                </ListItem>
+              ))}
+            </List>
+
+            {/* Profile and Logout */}
+            <List sx={{ marginTop: 'auto' }}>
+              {menuItems.slice(5).map((item, index) => (
+                <ListItem
+                  key={index + 5}
+                  onClick={() => {
+                    handleMenuItemClick(index + 5, item.onClick);
                   }}
                 >
-                  {item.icon}
-                  <Typography fontSize="16px">{item.text}</Typography>
-                </Box>
+                  <ListItemButton sx={{...menuItemStyles,}}>
+                    <ListItemIcon
+                      sx={{
+                        '&.MuiListItemIcon-root': {
+                          m: 0,
+                          p: 0,
+                        }
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={open ? null : item.text}
+                      primaryTypographyProps={{
+                        color: nuetralDark,
+                        fontSize: 16,
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
               ))}
+            </List>
+          </Drawer>
+
+          {/* Search Drawer */}
+          {open && (
+            <SearchDrawer open />
+          )}
+        </Box>
+
+      ) : (
+        // Mobile Navbar
+        <Box>
+          {/* Top NavBar */}
+          <Box
+            position="fixed"
+            top="0"
+            left="0"
+            right="0"
+            width="100%"
+            backgroundColor={background}
+            borderBottom={`1px solid ${theme.palette.neutral.medium}`}
+            zIndex="1000"
+            display="flex"
+          >
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="space-around"
+              alignItems="center"
+              width="100%"
+              p="0.3rem"
+            >
+              <img
+                onClick={() => navigate("/home")}
+                src={"/assets/logo.png"}
+                alt="PulseWave Logo"
+                width='40%'
+              />
+              <Box sx={{ flexGrow: 1 }} />
+              {menuItems.slice(5).map((item, index) => (
+                <Tooltip title='Will update soon...' placement="bottom">
+                  <Box
+                    key={index}
+                    onClick={() => {
+                      handleMenuItemClick(index, item.onClick);
+                    }}
+                    sx={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      ml: "0.8rem",
+                      p: "0.1rem",
+                      '&:hover': {
+                        bgcolor: alt,
+                      },
+                      borderRadius: "100%",
+                    }}
+                  >
+                    {item.icon}
+                  </Box>
+                </Tooltip>
+              ))}
+            </Box>
           </Box>
 
-          {/* Profile and Logout */}
-          <Box display="flex" flexDirection="column" gap="2rem" width="100%" marginTop="auto">
-            {menuItems.slice(5).map((item, index) => (
-              <Box
-                key={index + 5}
-                onClick={() => {
-                  handleMenuItemClick(index + 5, item.onClick);
-                }}
-                sx={{
-                  ...menuItemStyles,
-                  bgcolor: selectedMenuItem === index + 5 ? alt : "inherit",
-                  '& > *': {
-                    fontWeight: selectedMenuItem === index + 5 ? "bold" : "normal",
-                  },
-                }}
-              >
-                {item.icon}
-                <Typography fontSize="16px">{item.text}</Typography>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      ) : (
-          // Mobile Navbar
+          {/* Bottom NavBar */}
           <Box
             position="fixed"
             bottom="0"
@@ -192,13 +307,13 @@ const Navbar = ({ userId, picturePath }) => {
             width="100%"
             backgroundColor={background}
             borderTop={`1px solid ${theme.palette.neutral.medium}`}
-            zIndex="10"
+            zIndex="1000"
             display="flex"
           >
             <Box
               display="flex"
               flexDirection="row"
-              justifyContent="center"
+              justifyContent="space-around"
               alignItems="center"
               width="100%"
             >
@@ -209,8 +324,14 @@ const Navbar = ({ userId, picturePath }) => {
                     handleMenuItemClick(index, item.onClick);
                   }}
                   sx={{
-                    ...menuItemMobileStyles,
-                    borderTop: selectedMenuItem === index ? `1px solid ${theme.palette.primary.main}` : "inherit",        
+                    justifyContent: "center",
+                    alignItems: "center",
+                    px: "1.5rem",
+                    py: "0.25rem",
+                    '&:hover': {
+                      bgcolor: alt,
+                    },
+                    borderTop: selectedMenuItem === index ? `1px solid ${theme.palette.primary.main}` : "inherit",
                   }}
                 >
                   {item.icon}
@@ -218,6 +339,12 @@ const Navbar = ({ userId, picturePath }) => {
               ))}
             </Box>
           </Box>
+
+          {/* Search Modal */}
+          {open && (
+            <SearchDrawer open onClose={handleSearchClose} />
+          )}
+        </Box>
       )}
     </div>
   );

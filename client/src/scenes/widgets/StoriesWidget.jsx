@@ -97,7 +97,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
 
   return (
     <>
-      <WidgetWrapper>
+      <WidgetWrapper mb="2rem">
       <div {...handlers}>
         <Box
           onMouseEnter={() => setIsHovered(true)}

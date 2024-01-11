@@ -8,6 +8,7 @@ export const register = async (req, res) => {
     const {
       firstName,
       lastName,
+      userName,
       email,
       password,
       picturePath,
@@ -22,6 +23,7 @@ export const register = async (req, res) => {
     const newUser = new User({
       firstName,
       lastName,
+      userName,
       email,
       password: passwordHash,
       picturePath,
