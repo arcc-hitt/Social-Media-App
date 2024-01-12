@@ -58,9 +58,6 @@ const Navbar = ({ userId, picturePath }) => {
     color: nuetralDark,
     '&:hover': {
       bgcolor: alt,
-      '& > *': {
-        fontWeight: 'bold',
-      },
     },
   };
 
@@ -90,7 +87,7 @@ const Navbar = ({ userId, picturePath }) => {
       { icon: <Logout sx={{ fontSize: "25px" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
     ]
     : [
-      { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => { navigate("/home"); setOpen(!open); } },
+      { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => { navigate("/home"); setOpen(false); } },
       { icon: <Search sx={{ fontSize: "25px" }} />, text: "Search", onClick: handleSearchOpen },
       {
         icon: theme.palette.mode === "dark" ? (
@@ -159,7 +156,7 @@ const Navbar = ({ userId, picturePath }) => {
                 >
                   {item.text === "Messages" || item.text === "Notifications" ? (
                     <Tooltip title='Will update soon...' placement="bottom">
-                      <ListItemButton sx={{...menuItemStyles,}}>
+                      <ListItemButton sx={{ ...menuItemStyles }}>
                         <ListItemIcon
                           sx={{
                             '&.MuiListItemIcon-root': {
@@ -180,7 +177,7 @@ const Navbar = ({ userId, picturePath }) => {
                       </ListItemButton>
                     </Tooltip>
                   ) : (
-                    <ListItemButton sx={{...menuItemStyles,}}>
+                    <ListItemButton sx={{ ...menuItemStyles }}>
                       <ListItemIcon
                         sx={{
                           '&.MuiListItemIcon-root': {
@@ -255,8 +252,7 @@ const Navbar = ({ userId, picturePath }) => {
             width="100%"
             backgroundColor={background}
             borderBottom={`1px solid ${theme.palette.neutral.medium}`}
-            zIndex="1000"
-            display="flex"
+            mb="2rem"
           >
             <Box
               display="flex"
@@ -264,7 +260,7 @@ const Navbar = ({ userId, picturePath }) => {
               justifyContent="space-around"
               alignItems="center"
               width="100%"
-              p="0.3rem"
+              p="0.4rem"
             >
               <img
                 onClick={() => navigate("/home")}
@@ -327,7 +323,7 @@ const Navbar = ({ userId, picturePath }) => {
                     justifyContent: "center",
                     alignItems: "center",
                     px: "1.5rem",
-                    py: "0.25rem",
+                    py: "0.35rem",
                     '&:hover': {
                       bgcolor: alt,
                     },

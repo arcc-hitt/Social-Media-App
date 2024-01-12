@@ -98,69 +98,99 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
   return (
     <>
       <WidgetWrapper mb="2rem">
-      <div {...handlers}>
-        <Box
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          sx={{
-            display: 'flex',
-            flexDirection: "row",
-            position: "relative",
-          }}
-        >
-          <IconButton
-            onClick={handlePrevPage}
-            disabled={currentPage === 0}
+        <div {...handlers}>
+          <Box
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             sx={{
-              visibility: isHovered ? "visible" : "hidden",
-              position: "absolute",
-              left: 0,
-              top: "50%",
-              transform: "translateY(-50%)",
-              zIndex: "1000",
+              display: 'flex',
+              flexDirection: "row",
+              position: "relative",
             }}
           >
-            <NavigateBefore />
-          </IconButton>
-
-          <Stack
-            direction="row"
-            spacing={1}
-            width="100%"
-          >
-            <Box
+            <IconButton
+              onClick={handlePrevPage}
+              disabled={currentPage === 0}
               sx={{
-                display: 'flex',
-                flexDirection: "row",
-                width: "100%",
+                visibility: isHovered ? "visible" : "hidden",
+                position: "absolute",
+                left: 0,
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: "1000",
               }}
-              ref={containerRef}
             >
-              {/* Render MyStoryWidget components */}
-              {!currentUserStory ? (
-                userId && (
-                  <Slide
-                    direction={slideDirection}
-                    in={true}
-                    container={containerRef.current}
-                  >
-                    <Stack
-                      direction="row"
-                      justifyContent="space-around"
-                      alignItems="center"
-                      spacing={1}
+              <NavigateBefore />
+            </IconButton>
+
+            <Stack
+              direction="row"
+              spacing={1}
+              width="100%"
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: "row",
+                  width: "100%",
+                }}
+                ref={containerRef}
+              >
+                {/* Render MyStoryWidget components */}
+                {!currentUserStory ? (
+                  userId && (
+                    <Slide
+                      direction={slideDirection}
+                      in={true}
+                      container={containerRef.current}
                     >
-                      <MyStoryWidget
-                        picturePath={userPicturePath}
-                        userPicturePath={userPicturePath}
-                        currentUserStory={currentUserStory}
-                      />
-                    </Stack>
-                  </Slide>
-                )
-              ) : (
-                uniqueUserStories
-                  .filter((story) => story.userId === userId)
+                      <Stack
+                        direction="row"
+                        justifyContent="space-around"
+                        alignItems="center"
+                        spacing={1}
+                      >
+                        <MyStoryWidget
+                          picturePath={userPicturePath}
+                          userPicturePath={userPicturePath}
+                          currentUserStory={currentUserStory}
+                        />
+                      </Stack>
+                    </Slide>
+                  )
+                ) : (
+                  uniqueUserStories
+                    .filter((story) => story.userId === userId)
+                    .map((story) => (
+                      <Slide
+                        key={story._id}
+                        direction={slideDirection}
+                        in={true}
+                        container={containerRef.current}
+                      >
+                        <Stack
+                          direction="row"
+                          justifyContent="space-around"
+                          alignItems="center"
+                          spacing={1}
+                          style={{ width: `${100 / cardsPerPage}%` }}
+                        >
+                          <MyStoryWidget
+                            userName={story.userName}
+                            picturePath={story.picturePath}
+                            userPicturePath={story.userPicturePath}
+                            currentUserStory={currentUserStory}
+                            onImageClick={() => handleModalOpen(story.userId)}
+                          />
+                        </Stack>
+                      </Slide>
+                    ))
+                )}
+
+                {/* Render other StoryWidget components */}
+                {uniqueUserStories
+                  .filter((story) => story.userId !== userId)
+                  .slice(startIdx, endIdx)
                   .map((story) => (
                     <Slide
                       key={story._id}
@@ -173,71 +203,43 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                         justifyContent="space-around"
                         alignItems="center"
                         spacing={1}
-                        style={{ width: `${100 / cardsPerPage}%` }}
+                        style={{ width: `${100 / storiesPerPage}%` }}
+                        onClick={() => handleModalOpen(story.userId)}
                       >
-                        <MyStoryWidget
+                        <StoryWidget
+                          storyId={story._id}
+                          storyUserId={story.userId}
+                          userName={story.userName}
+                          name={`${story.firstName} ${story.lastName}`}
+                          description={story.description}
+                          location={story.location}
                           picturePath={story.picturePath}
                           userPicturePath={story.userPicturePath}
-                          currentUserStory={currentUserStory}
-                          onImageClick={() => handleModalOpen(story.userId)}
+                          likes={story.likes}
+                          comments={story.comments}
+                          createdAt={story.createdAt}
                         />
                       </Stack>
                     </Slide>
                   ))
-              )}
+                }
+              </Box>
+            </Stack>
 
-              {/* Render other StoryWidget components */}
-              {uniqueUserStories
-                .filter((story) => story.userId !== userId)
-                .slice(startIdx, endIdx)
-                .map((story) => (
-                  <Slide
-                    key={story._id}
-                    direction={slideDirection}
-                    in={true}
-                    container={containerRef.current}
-                  >
-                    <Stack
-                      direction="row"
-                      justifyContent="space-around"
-                      alignItems="center"
-                      spacing={1}
-                      style={{ width: `${100 / storiesPerPage}%` }}
-                      onClick={() => handleModalOpen(story.userId)}
-                    >
-                      <StoryWidget
-                        storyId={story._id}
-                        storyUserId={story.userId}
-                        name={`${story.firstName} ${story.lastName}`}
-                        description={story.description}
-                        location={story.location}
-                        picturePath={story.picturePath}
-                        userPicturePath={story.userPicturePath}
-                        likes={story.likes}
-                        comments={story.comments}
-                        createdAt={story.createdAt}
-                      />
-                    </Stack>
-                  </Slide>
-                ))
-              }
-            </Box>
-          </Stack>
-
-          <IconButton
-            onClick={handleNextPage}
-            sx={{
-              visibility: isHovered ? "visible" : "hidden",
-              position: "absolute",
-              right: 0,
-              top: "50%",
-              transform: "translateY(-50%)",
-            }}
-          >
-            <NavigateNext />
-          </IconButton>
-        </Box>
-      </div>
+            <IconButton
+              onClick={handleNextPage}
+              sx={{
+                visibility: isHovered ? "visible" : "hidden",
+                position: "absolute",
+                right: 0,
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
+            >
+              <NavigateNext />
+            </IconButton>
+          </Box>
+        </div>
       </WidgetWrapper>
       {modalOpen && currentUserStory && (
         <StoryModal

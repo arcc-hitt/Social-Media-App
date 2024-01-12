@@ -24,13 +24,12 @@ const HomePage = () => {
         gap="0.5rem"
         justifyContent="space-between"
       >
-        <Box flexBasis={isNonMobileScreens ? "15%" : "100%"} mb="2rem">
+        <Box flexBasis={isNonMobileScreens ? "15%" : "100%"} mb="3rem">
           <Navbar userId={_id} picturePath={picturePath}/>
         </Box>        
 
         <Box flexBasis={isNonMobileScreens ? "45%" : "100%"}>
           <Box>
-            {/* <MyStoryWidget picturePath={picturePath} /> */}
             <StoriesWidget userId={_id} userPicturePath={picturePath} />
           </Box>
           <Box>
