@@ -6,12 +6,11 @@ import UserWidget from "scenes/widgets/UserWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import StoriesWidget from "scenes/widgets/StoriesWidget";
-import MyStoryWidget from "scenes/widgets/MyStoryWidget";
-import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const isSmallLaptopScreens = useMediaQuery("(min-width:1025px)");
   const { _id, picturePath } = useSelector((state) => state.user);
 
   return (
@@ -21,7 +20,7 @@ const HomePage = () => {
         padding={isNonMobileScreens ? "2rem 2rem 2rem 0rem" : "1rem"}
         display={isNonMobileScreens ? "flex" : "block"}
         flexDirection={isNonMobileScreens ? "row" : "column"}
-        gap="0.5rem"
+        // gap="0.5rem"
         justifyContent="space-between"
       >
         <Box flexBasis={isNonMobileScreens ? "15%" : "100%"} mb="3rem">
@@ -38,7 +37,7 @@ const HomePage = () => {
           </Box>
         </Box>
 
-        {isNonMobileScreens && (
+        {isNonMobileScreens && isSmallLaptopScreens && (
           <Box flexBasis="20%">
             {/* <AdvertWidget /> */}
             <UserWidget userId={_id} picturePath={picturePath} />

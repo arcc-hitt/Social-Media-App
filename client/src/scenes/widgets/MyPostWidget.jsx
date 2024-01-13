@@ -63,7 +63,8 @@ const MyPostWidget = ({ picturePath }) => {
     "&:hover": {
       cursor: "pointer",
       backgroundColor: palette.neutral.light,
-      padding: "0.5rem",
+      py: "0.2rem",
+      px: "0.3rem",
       color: palette.neutral.dark,
     },
   };
@@ -78,7 +79,7 @@ const MyPostWidget = ({ picturePath }) => {
           value={post}
           sx={{
             width: "100%",
-            backgroundColor: palette.neutral.light,
+            border: `1px solid ${palette.neutral.light}`,
             borderRadius: "1rem",
             padding: "1rem 1rem",
           }}

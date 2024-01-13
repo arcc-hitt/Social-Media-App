@@ -103,16 +103,43 @@ const PostWidget = ({
         {description}
       </Typography>
       
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          border: `1px solid ${palette.neutral.light}`,
+          borderRadius: "0.75rem",
+          marginTop: "0.75rem",
+        }}
+      >
       {picturePath && (
         <img
-          width="100%"
-          height="auto"
-          alt="post"
-          style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`http://localhost:3001/assets/${picturePath}`}
-        />
+        style={{
+          width: 'auto',
+          height: 'auto',
+          maxWidth: '100%',
+          maxHeight: '100%',
+          borderRadius: "0.75rem",
+        }}
+        alt="post"
+        src={`http://localhost:3001/assets/${picturePath}`}
+        onLoad={(e) => {
+          const { naturalWidth, naturalHeight } = e.target;
+          const isLandscape = naturalWidth > naturalHeight;
+
+          if (isLandscape) {
+            e.target.style.width = '100%';
+            e.target.style.height = 'auto';
+          } else {
+            e.target.style.width = '62%';
+            e.target.style.height = 'auto';
+          }
+        }}
+      />
       )}
-      
+      </Box>
+            
       <Typography
         color={medium}
         fontSize="0.75rem"

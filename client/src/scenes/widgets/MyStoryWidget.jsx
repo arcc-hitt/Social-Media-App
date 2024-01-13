@@ -14,6 +14,8 @@ import {
   Badge,
   Slider,
   useMediaQuery,
+  InputAdornment,
+  Tooltip,
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
@@ -311,6 +313,7 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
         </Box>
       )}
 
+      {/* Modal to Add New Stories */}
       {isNonMobileScreens ? (
         // Desktop screens
         <Modal
@@ -336,209 +339,56 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
               justifyContent: 'center',
             }}
           >
-            <Box
-              sx={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-              }}
-            >
-              {image ? (
-                <Box
+            {image ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                }}
+              >
+                <FlexBetween
                   sx={{
-                    display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
+                    borderRadius: '0.75rem',
+                    background: `linear-gradient(to bottom right, ${palette.neutral.light}, ${palette.neutral.dark})`,
+                    width: '400px',
                   }}
                 >
-                  <FlexBetween
-                    sx={{
-                      flexDirection: 'column',
-                      borderRadius: '0.75rem',
-                      background: `linear-gradient(to bottom right, ${palette.neutral.light}, ${palette.neutral.dark})`,
-                      width: '400px',
-                    }}
-                  >
-                    {/* Display story image with caption */}
-                    <Box
-                      sx={{
-                        position: 'relative',
-                        width: '400px',
-                        height: '600px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt="selectedStory"
-                        style={{
-                          width: 'auto',
-                          height: 'auto',
-                          maxWidth: '400px',
-                          maxHeight: '600px',
-                        }}
-                        onLoad={(e) => {
-                          const { naturalWidth, naturalHeight } = e.target;
-                          const isLandscape = naturalWidth > naturalHeight;
-
-                          if (isLandscape) {
-                            e.target.style.width = '400px';
-                            e.target.style.height = 'auto';
-                          } else {
-                            e.target.style.width = 'auto';
-                            e.target.style.height = '600px';
-                            e.target.style.borderRadius = '0.75rem';
-                          }
-                        }}
-                      />
-                      {story && (
-                        <Typography
-                          variant="subtitle"
-                          component="Box"
-                          sx={{
-                            position: 'absolute',
-                            bottom: '4rem',
-                            left: '0rem',
-                            right: '0rem',
-                            color: palette.neutral.dark,
-                            maxWidth: '400px',
-                            overflow: 'hidden',
-                            whiteSpace: 'normal',
-                            wordWrap: 'break-word',
-                            textOverflow: 'ellipsis',
-                            backgroundColor: `${palette.neutral.light}AA`,
-                            padding: '0.2rem',
-                            textAlign: 'center',
-                          }}
-                        >
-                          {story}
-                        </Typography>
-                      )}
-                    </Box>
-                  </FlexBetween>
-
-                  {/* Caption input, post button, delete icon */}
+                  {/* Display story image with caption */}
                   <Box
                     sx={{
+                      position: 'relative',
+                      width: '400px',
+                      height: '600px',
                       display: 'flex',
-                      flexDirection: 'row',
-                      width: '100%',
-                      marginTop: '1rem'
-                    }}>
-                    <InputBase
-                      placeholder="What's on your mind..."
-                      onChange={(e) => setStory(e.target.value)}
-                      value={story}
-                      sx={{
-                        flex: 1,
-                        backgroundColor: palette.neutral.light,
-                        borderRadius: "1rem",
-                        padding: "0.6rem",
-                        marginRight: '1rem',
-                      }}
-                    />
-                    <Button
-                      onClick={handleStory}
-                      sx={{
-                        color: palette.neutral.light,
-                        backgroundColor: palette.primary.main,
-                        borderRadius: "1rem",
-                        marginRight: '0.5rem',
-                        '&:hover': {
-                          color: palette.neutral.dark,
-                          backgroundColor: palette.primary.light,
-                        },
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      POST
-                    </Button>
-
-                    <IconButton onClick={() => setImage(null)}>
-                      <DeleteOutlined />
-                    </IconButton>
-                  </Box>
-                </Box>
-              ) : (
-                <Dropzone
-                  acceptedFiles=".jpg,.jpeg,.png"
-                  multiple={false}
-                  onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <FlexBetween>
-                      <Box
-                        {...getRootProps()}
-                        border={`2px dashed ${palette.primary.main}`}
-                        p="1rem"
-                        width="100%"
-                        sx={{ "&:hover": { cursor: "pointer" } }}
-                      >
-                        <input {...getInputProps()} />
-                        <p>Add Image Here</p>
-                      </Box>
-                    </FlexBetween>
-                  )}
-                </Dropzone>
-              )}
-            </Box>
-
-            <IconButton
-              aria-label="close"
-              onClick={handleClose}
-              sx={{ position: "absolute", top: 0, right: 0 }}
-            >
-              <Close />
-            </IconButton>
-          </Box>
-        </Modal>
-      ) : (
-        // Mobile devices
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="image-modal"
-          aria-describedby="image-modal-description"
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '100vw',
-              height: '100vh',
-              bgcolor: 'background.paper',
-              border: 'none',
-              boxShadow: 24,
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-              }}
-            >
-              {image ? (
-                <FlexBetween sx={{ flexDirection: 'column', alignItems: 'center' }}>
-                  <Box style={{ position: 'relative' }}>
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
                     <img
                       src={URL.createObjectURL(image)}
                       alt="selectedStory"
                       style={{
-                        width: `100%`,
-                        height: `100%`,
+                        width: 'auto',
+                        height: 'auto',
+                        maxWidth: '400px',
+                        maxHeight: '600px',
+                      }}
+                      onLoad={(e) => {
+                        const { naturalWidth, naturalHeight } = e.target;
+                        const isLandscape = naturalWidth > naturalHeight;
+
+                        if (isLandscape) {
+                          e.target.style.width = '400px';
+                          e.target.style.height = 'auto';
+                        } else {
+                          e.target.style.width = 'auto';
+                          e.target.style.height = '600px';
+                          e.target.style.borderRadius = '0.75rem';
+                        }
                       }}
                     />
                     {story && (
@@ -565,71 +415,263 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
                       </Typography>
                     )}
                   </Box>
-                  <Box sx={{
-                    position: 'absolute',
+                </FlexBetween>
+
+                {/* Caption input, post button, delete icon */}
+                <Box
+                  sx={{
                     display: 'flex',
                     flexDirection: 'row',
                     width: '100%',
-                    bottom: '1rem',
-                    height: '2.5rem',
-                    justifyContent: 'center',
+                    marginTop: '1rem'
                   }}>
-                    <InputBase
-                      placeholder="What's on your mind..."
-                      onChange={(e) => setStory(e.target.value)}
-                      value={story}
-                      sx={{
-                        backgroundColor: palette.neutral.light,
-                        borderRadius: "1rem",
-                        padding: "1rem",
-                        marginRight: '1rem',
-                      }}
-                    />
-                    <Button
-                      disabled={!story}
-                      onClick={handleStory}
-                      sx={{
-                        color: palette.neutral.light,
-                        backgroundColor: palette.primary.main,
-                        borderRadius: "1rem",
-                        '&:hover': {
+                  <InputBase
+                    placeholder="What's on your mind..."
+                    onChange={(e) => setStory(e.target.value)}
+                    value={story}
+                    sx={{
+                      flexBasis: '95%',
+                      // backgroundColor: palette.neutral.light,
+                      border: `1px solid ${palette.neutral.light}`,
+                      borderRadius: "1rem",
+                      padding: "0.6rem",
+                      marginRight: '1rem',
+                    }}
+                    endAdornment={(
+                      <Button
+                        onClick={handleStory}
+                        sx={{
                           color: palette.neutral.dark,
-                          backgroundColor: palette.primary.light,
-                        },
-                        whiteSpace: 'nowrap',
+                          borderRadius: "1rem",
+                          whiteSpace: 'nowrap',
+                          '&:hover': {
+                            backgroundColor: palette.neutral.light
+                          }
+                        }}
+                      >
+                        POST
+                      </Button>
+                    )}
+                  />
+                  <Tooltip title="Delete Image">
+                    <IconButton
+                      onClick={() => setImage(null)}
+                      sx={{
+                        flexBasis: '5%',
                       }}
                     >
-                      POST
-                    </Button>
-
-                    <IconButton onClick={() => setImage(null)}>
                       <DeleteOutlined />
                     </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
+            ) : (
+              <Dropzone
+                acceptedFiles=".jpg,.jpeg,.png"
+                multiple={false}
+                onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <FlexBetween>
+                    <Box
+                      {...getRootProps()}
+                      border={`2px dashed ${palette.primary.main}`}
+                      p="1rem"
+                      width="100%"
+                      sx={{ "&:hover": { cursor: "pointer" } }}
+                    >
+                      <input {...getInputProps()} />
+                      <p>Add Image Here</p>
+                    </Box>
+                  </FlexBetween>
+                )}
+              </Dropzone>
+            )}
+
+            <IconButton
+              aria-label="close"
+              onClick={handleClose}
+              sx={{ position: "absolute", top: 0, right: 0 }}
+            >
+              <Close />
+            </IconButton>
+          </Box>
+        </Modal>
+      ) : (
+        // Mobile devices
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="image-modal"
+          aria-describedby="image-modal-description"
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '100vw',
+              height: '100vh',
+              bgcolor: `${palette.background.alt}`,
+              border: 'none',
+              boxShadow: 24,
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {image ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                }}
+              >
+                <FlexBetween
+                  sx={{
+                    flexDirection: 'column',
+                    borderRadius: '0.75rem',
+                    background: `linear-gradient(to bottom right, ${palette.neutral.light}, ${palette.neutral.dark})`,
+                    width: '100vw',
+                  }}
+                >
+                  {/* Display story image with caption */}
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      width: '100vw',
+                      height: '100vh',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt="selectedStory"
+                      style={{
+                        width: 'auto',
+                        height: 'auto',
+                        maxWidth: '100vw',
+                        maxHeight: '100vh',
+                      }}
+                      onLoad={(e) => {
+                        const { naturalWidth, naturalHeight } = e.target;
+                        const isLandscape = naturalWidth > naturalHeight;
+
+                        if (isLandscape) {
+                          e.target.style.width = '100vw';
+                          e.target.style.height = 'auto';
+                        } else {
+                          e.target.style.width = 'auto';
+                          e.target.style.height = '100vh';
+                          e.target.style.borderRadius = '0.75rem';
+                        }
+                      }}
+                    />
+                    {story && (
+                      <Typography
+                        variant="subtitle"
+                        component="Box"
+                        sx={{
+                          position: 'absolute',
+                          bottom: '5rem',
+                          left: '0rem',
+                          right: '0rem',
+                          color: palette.neutral.dark,
+                          maxWidth: '400px',
+                          overflow: 'hidden',
+                          whiteSpace: 'normal',
+                          wordWrap: 'break-word',
+                          textOverflow: 'ellipsis',
+                          backgroundColor: `${palette.neutral.light}AA`,
+                          padding: '0.2rem',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {story}
+                      </Typography>
+                    )}
+
+                    {/* Caption input, post button, delete icon */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        zIndex: 1000,
+                        position: 'absolute',
+                        bottom: '0.6rem',
+                        right: '0.4rem',
+                        left: '0.4rem',
+                      }}
+                    >
+                      <InputBase
+                        placeholder="What's on your mind..."
+                        onChange={(e) => setStory(e.target.value)}
+                        value={story}
+                        sx={{
+                          flexBasis: '80%',
+                          // backgroundColor: palette.neutral.light,
+                          border: `1px solid ${palette.neutral.light}`,
+                          borderRadius: "1rem",
+                          padding: "0.6rem",
+                          // marginRight: '1rem',
+                        }}
+                        endAdornment={(
+                          <Button
+                            onClick={handleStory}
+                            sx={{
+                              color: palette.neutral.light,
+                              borderRadius: "1rem",
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            POST
+                          </Button>
+                        )}
+                      />
+                      <IconButton
+                        onClick={() => setImage(null)}
+                        sx={{
+                          flexBasis: '20%',
+                        }}
+                      >
+                        <DeleteOutlined />
+                      </IconButton>
+                    </Box>
                   </Box>
                 </FlexBetween>
-              ) : (
-                <Dropzone
-                  acceptedFiles=".jpg,.jpeg,.png"
-                  multiple={false}
-                  onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <FlexBetween>
-                      <Box
-                        {...getRootProps()}
-                        border={`2px dashed ${palette.primary.main}`}
-                        p="1rem"
-                        width="100%"
-                        sx={{ "&:hover": { cursor: "pointer" } }}
-                      >
-                        <input {...getInputProps()} />
-                        <p>Add Image Here</p>
-                      </Box>
-                    </FlexBetween>
-                  )}
-                </Dropzone>
-              )}
-            </Box>
+              </Box>
+            ) : (
+              <Dropzone
+                acceptedFiles=".jpg,.jpeg,.png"
+                multiple={false}
+                onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <FlexBetween sx={{ justifyContent: "center" }}>
+                    <Box
+                      {...getRootProps()}
+                      border={`2px dashed ${palette.primary.main}`}
+                      p="1rem"
+                      width="100%"
+                      sx={{ "&:hover": { cursor: "pointer" } }}
+                    >
+                      <input {...getInputProps()} />
+                      <p>Add Image Here</p>
+                    </Box>
+                  </FlexBetween>
+                )}
+              </Dropzone>
+            )}
 
             <IconButton
               aria-label="close"

@@ -164,10 +164,10 @@ const StoryModal = ({
               transform: 'translate(-50%, -50%)',
               width: '100vw',
               height: '100vh',
-              bgcolor: 'background.paper',
+              backgroundColor: `${palette.background.alt}`,
               border: 'none',
               boxShadow: 24,
-              p: 2,
+              p: 4,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -212,6 +212,7 @@ const StoryModal = ({
                       <StoryWidget
                         storyId={story._id}
                         storyUserId={story.userId}
+                        userName={story.userName}
                         name={`${story.firstName} ${story.lastName}`}
                         description={story.description}
                         location={story.location}

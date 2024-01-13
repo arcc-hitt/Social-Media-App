@@ -13,7 +13,7 @@ const ProfilePage = () => {
   const { _id, picturePath } = useSelector((state) => state.user);
   const { userId } = useParams();
   const token = useSelector((state) => state.token);
-  const isNonMobileScreens = useMediaQuery("(min-width:821px)");
+  const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
   const getUser = async () => {
     const response = await fetch(`http://localhost:3001/users/${userId}`, {
@@ -37,7 +37,7 @@ const ProfilePage = () => {
         padding={isNonMobileScreens ? "2rem 2rem 2rem 0rem" : "2rem"}
         display={isNonMobileScreens ? "flex" : "block"}
         justifyContent="space-around"
-      > 
+      >
         <Box flexBasis={isNonMobileScreens ? "15%" : undefined} mb="2rem">
           <Navbar userId={_id} picturePath={picturePath} />
         </Box>

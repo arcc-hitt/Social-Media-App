@@ -6,7 +6,7 @@ import RainbowMouseTrail from './RainbowMouseTrail';
 import './RainbowMouseTrail.css';
 
 const LoginPage = () => {
-  const isNonMobileScreens = useMediaQuery("(min-width: 821px)");
+  const isNonMobileScreens = useMediaQuery("(min-width: 1024px)");
 
   return (
     <>

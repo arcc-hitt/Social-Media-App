@@ -153,6 +153,9 @@ const Navbar = ({ userId, picturePath }) => {
                   onClick={() => {
                     handleMenuItemClick(index, item.onClick);
                   }}
+                  sx={{
+                    p: 1,
+                  }}
                 >
                   {item.text === "Messages" || item.text === "Notifications" ? (
                     <Tooltip title='Will update soon...' placement="bottom">
@@ -160,9 +163,10 @@ const Navbar = ({ userId, picturePath }) => {
                         <ListItemIcon
                           sx={{
                             '&.MuiListItemIcon-root': {
-                              m: 0,
+                              mr: 2,
                               p: 0,
-                            }
+                              minWidth: '25px',
+                            },
                           }}
                         >
                           {item.icon}
@@ -171,7 +175,7 @@ const Navbar = ({ userId, picturePath }) => {
                           primary={open ? null : item.text}
                           primaryTypographyProps={{
                             color: nuetralDark,
-                            fontSize: 16,
+                            fontSize: '110%',
                           }}
                         />
                       </ListItemButton>
@@ -181,9 +185,10 @@ const Navbar = ({ userId, picturePath }) => {
                       <ListItemIcon
                         sx={{
                           '&.MuiListItemIcon-root': {
-                            m: 0,
+                            mr: 2,
                             p: 0,
-                          }
+                            minWidth: '25px',
+                          },
                         }}
                       >
                         {item.icon}
@@ -192,7 +197,7 @@ const Navbar = ({ userId, picturePath }) => {
                         primary={open ? null : item.text}
                         primaryTypographyProps={{
                           color: nuetralDark,
-                          fontSize: 16,
+                          fontSize: '110%',
                         }}
                       />
                     </ListItemButton>
@@ -209,14 +214,18 @@ const Navbar = ({ userId, picturePath }) => {
                   onClick={() => {
                     handleMenuItemClick(index + 5, item.onClick);
                   }}
+                  sx={{
+                    p: 1,
+                  }}
                 >
-                  <ListItemButton sx={{...menuItemStyles,}}>
+                  <ListItemButton sx={{ ...menuItemStyles, }}>
                     <ListItemIcon
                       sx={{
                         '&.MuiListItemIcon-root': {
-                          m: 0,
+                          mr: 2,
                           p: 0,
-                        }
+                          minWidth: '25px',
+                        },
                       }}
                     >
                       {item.icon}
@@ -225,7 +234,7 @@ const Navbar = ({ userId, picturePath }) => {
                       primary={open ? null : item.text}
                       primaryTypographyProps={{
                         color: nuetralDark,
-                        fontSize: 16,
+                        fontSize: '110%',
                       }}
                     />
                   </ListItemButton>
