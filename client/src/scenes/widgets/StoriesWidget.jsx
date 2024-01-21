@@ -1,4 +1,4 @@
-import { Stack, Box, IconButton, Slide } from '@mui/material';
+import { Stack, Box, IconButton, Slide, Grid, useMediaQuery } from '@mui/material';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,10 +8,12 @@ import WidgetWrapper from "components/WidgetWrapper";
 import StoryWidget from "./StoryWidget";
 import MyStoryWidget from './MyStoryWidget';
 import StoryModal from './StoryModal';
+import { useTheme } from '@emotion/react';
 
 
 const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
   const dispatch = useDispatch();
+  const { userName } = useSelector((state) => state.user);
   const stories = useSelector((state) => state.stories);
   const token = useSelector((state) => state.token);
 
@@ -71,9 +73,15 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const cardsPerPage = 4;
-  const storiesPerPage = cardsPerPage - 1;
-  const totalPages = Math.ceil(uniqueUserStories.length / storiesPerPage);
+  const theme = useTheme();
+  const isSmallLaptop = useMediaQuery(theme.breakpoints.only('md'));
+  const isSmallMobile = useMediaQuery("(width: 320px)");
+
+  const cardsPerPage = { md: isSmallLaptop || isSmallMobile ? 4 : 5 };
+
+  const storiesPerPage = cardsPerPage.md - 1;
+
+  const totalPages = Math.round(uniqueUserStories.length / storiesPerPage);
 
   const startIdx = currentPage * storiesPerPage;
   const endIdx = startIdx + storiesPerPage;
@@ -97,6 +105,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
 
   return (
     <>
+      {/* Stories Carousel*/}
       <WidgetWrapper mb="2rem">
         <div {...handlers}>
           <Box
@@ -125,8 +134,8 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
 
             <Stack
               direction="row"
-              spacing={1}
               width="100%"
+              ref={containerRef}
             >
               <Box
                 sx={{
@@ -134,7 +143,6 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                   flexDirection: "row",
                   width: "100%",
                 }}
-                ref={containerRef}
               >
                 {/* Render MyStoryWidget components */}
                 {!currentUserStory ? (
@@ -148,9 +156,10 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                         direction="row"
                         justifyContent="space-around"
                         alignItems="center"
-                        spacing={1}
+                        style={{ width: `${100 / cardsPerPage}%` }}
                       >
                         <MyStoryWidget
+                          userName={userName}
                           picturePath={userPicturePath}
                           userPicturePath={userPicturePath}
                           currentUserStory={currentUserStory}
@@ -172,7 +181,6 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                           direction="row"
                           justifyContent="space-around"
                           alignItems="center"
-                          spacing={1}
                           style={{ width: `${100 / cardsPerPage}%` }}
                         >
                           <MyStoryWidget
@@ -202,7 +210,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                         direction="row"
                         justifyContent="space-around"
                         alignItems="center"
-                        spacing={1}
+                        spacing='1'
                         style={{ width: `${100 / storiesPerPage}%` }}
                         onClick={() => handleModalOpen(story.userId)}
                       >

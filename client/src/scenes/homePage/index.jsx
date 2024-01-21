@@ -20,7 +20,6 @@ const HomePage = () => {
         padding={isNonMobileScreens ? "2rem 2rem 2rem 0rem" : "1rem"}
         display={isNonMobileScreens ? "flex" : "block"}
         flexDirection={isNonMobileScreens ? "row" : "column"}
-        // gap="0.5rem"
         justifyContent="space-between"
       >
         <Box flexBasis={isNonMobileScreens ? "15%" : "100%"} mb="3rem">
@@ -37,7 +36,7 @@ const HomePage = () => {
           </Box>
         </Box>
 
-        {isNonMobileScreens && isSmallLaptopScreens && (
+        {isNonMobileScreens && (
           <Box flexBasis="20%">
             {/* <AdvertWidget /> */}
             <UserWidget userId={_id} picturePath={picturePath} />

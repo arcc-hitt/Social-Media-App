@@ -38,6 +38,9 @@ const StoryWidget = ({
   const primary = palette.primary.main;
 
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  
+  const theme = useTheme(); 
+  const isSmallLaptop = useMediaQuery(theme.breakpoints.only('md'));
 
   const patchLike = async () => {
     const response = await fetch(`http://localhost:3001/stories/${storyId}/like`, {
@@ -227,18 +230,12 @@ const StoryWidget = ({
                 justifyContent: "center",
                 position: "relative",
                 cursor: "pointer",
-                padding: "0px",
-                borderRadius: "0.75rem",                
-                width: "145px",
-                height: "220px",
+                padding: 0,
+                borderRadius: "0.75rem",
+                aspectRatio: '6/9',
+                height: isSmallLaptop ? "130px" : "150px",
                 "&:hover": {
-                  boxShadow: `0 0 1px 1px rgba(255, 0, 0, 0.5),
-                              0 0 2px 2px rgba(255, 165, 0, 0.5),
-                              0 0 3px 3px rgba(255, 255, 0, 0.5),
-                              0 0 4px 4px rgba(0, 128, 0, 0.5),
-                              0 0 5px 5px rgba(0, 0, 255, 0.5),
-                              0 0 6px 6px rgba(75, 0, 130, 0.5),
-                              0 0 7px 7px rgba(189,33,255, 0.5)`
+                  boxShadow: "0 0 5px 5px rgba(0, 255, 255, 0.6)"
                 },
               }}
             >
@@ -246,10 +243,10 @@ const StoryWidget = ({
               <Box>
                 {picturePath && (
                   <img
-                    width="145px"
-                    height="220px"
                     alt="story"
-                    style={{
+                    style={{            
+                      aspectRatio: '6/9',
+                      height: isSmallLaptop ? "130px" : "150px",
                       borderRadius: "0.75rem",
                       filter: "blur(2px)",
                     }}
@@ -280,6 +277,7 @@ const StoryWidget = ({
                   color="white"
                   variant="h6"
                   fontWeight="500"
+                  fontSize="0.9vw"
                 >
                   {userName}
                 </Typography>

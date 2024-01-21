@@ -221,7 +221,6 @@ const SearchDrawer = ({ open = false, onClose }) => {
                         <ListItemButton
                           onClick={() => {
                             navigate(`/profile/${option._id}`)
-                            navigate(0);
                           }}
                           sx={{
                             borderRadius: "5px",

@@ -63,19 +63,19 @@ const Navbar = ({ userId, picturePath }) => {
 
   const menuItems = isNonMobileScreens
     ? [
-      { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => { navigate("/home"); setOpen(false); } },
-      { icon: <Search sx={{ fontSize: "25px" }} />, text: "Search", onClick: handleSearchOpen },
+      { icon: <Home sx={{ fontSize: "1.6vw" }} />, text: "Home", onClick: () => { navigate("/home"); setOpen(false); } },
+      { icon: <Search sx={{ fontSize: "1.6vw" }} />, text: "Search", onClick: handleSearchOpen },
       {
         icon: theme.palette.mode === "dark" ? (
-          <DarkMode sx={{ fontSize: "25px" }} />
+          <DarkMode sx={{ fontSize: "1.6vw" }} />
         ) : (
-          <LightMode sx={{ fontSize: "25px" }} />
+          <LightMode sx={{ fontSize: "1.6vw" }} />
         ),
         text: "Theme",
         onClick: () => dispatch(setMode()),
       },
-      { icon: <Message sx={{ fontSize: "25px" }} />, text: "Messages", onClick: () => { } },
-      { icon: <Notifications sx={{ fontSize: "25px" }} />, text: "Notifications", onClick: () => { } },
+      { icon: <Message sx={{ fontSize: "1.6vw" }} />, text: "Messages", onClick: () => { } },
+      { icon: <Notifications sx={{ fontSize: "1.6vw" }} />, text: "Notifications", onClick: () => { } },
       {
         icon: <UserImage image={picturePath} size="25px" />,
         text: "My Profile",
@@ -84,7 +84,7 @@ const Navbar = ({ userId, picturePath }) => {
           navigate(0);
         },
       },
-      { icon: <Logout sx={{ fontSize: "25px" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
+      { icon: <Logout sx={{ fontSize: "1.6vw" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },
     ]
     : [
       { icon: <Home sx={{ fontSize: "25px" }} />, text: "Home", onClick: () => { navigate("/home"); setOpen(false); } },
@@ -175,7 +175,7 @@ const Navbar = ({ userId, picturePath }) => {
                           primary={open ? null : item.text}
                           primaryTypographyProps={{
                             color: nuetralDark,
-                            fontSize: '110%',
+                            fontSize: '1.1vw',
                           }}
                         />
                       </ListItemButton>
@@ -197,7 +197,7 @@ const Navbar = ({ userId, picturePath }) => {
                         primary={open ? null : item.text}
                         primaryTypographyProps={{
                           color: nuetralDark,
-                          fontSize: '110%',
+                          fontSize: '1.1vw',
                         }}
                       />
                     </ListItemButton>
@@ -234,7 +234,7 @@ const Navbar = ({ userId, picturePath }) => {
                       primary={open ? null : item.text}
                       primaryTypographyProps={{
                         color: nuetralDark,
-                        fontSize: '110%',
+                        fontSize: '1.1vw',
                       }}
                     />
                   </ListItemButton>
@@ -259,6 +259,7 @@ const Navbar = ({ userId, picturePath }) => {
             left="0"
             right="0"
             width="100%"
+            zIndex="1000"
             backgroundColor={background}
             borderBottom={`1px solid ${theme.palette.neutral.medium}`}
             mb="2rem"
@@ -318,7 +319,7 @@ const Navbar = ({ userId, picturePath }) => {
             <Box
               display="flex"
               flexDirection="row"
-              justifyContent="space-around"
+              justifyContent="space-between"
               alignItems="center"
               width="100%"
             >
@@ -329,9 +330,11 @@ const Navbar = ({ userId, picturePath }) => {
                     handleMenuItemClick(index, item.onClick);
                   }}
                   sx={{
+                    width: '100%',
+                    display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    px: "1.5rem",
+                    px: "1rem",
                     py: "0.35rem",
                     '&:hover': {
                       bgcolor: alt,

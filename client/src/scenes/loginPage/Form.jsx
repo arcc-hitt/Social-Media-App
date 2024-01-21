@@ -26,6 +26,7 @@ import IconButton from '@mui/material/IconButton';
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
+  userName: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
   password: yup.string().required("required"),
   location: yup.string().required("required"),
@@ -41,6 +42,7 @@ const loginSchema = yup.object().shape({
 const initialValuesRegister = {
   firstName: "",
   lastName: "",
+  username: "",
   email: "",
   password: "",
   location: "",
@@ -279,6 +281,22 @@ const Form = () => {
                     )}
                   </Dropzone>
                 </Box>
+
+                <TextField
+                  label="Username"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.userName}
+                  name="userName"
+                  sx={{
+                    gridColumn: "span 4",
+                    ...textFieldStyles,
+                  }}
+                  InputProps={{
+                    style: { color: colorTokens.login.txt },
+                    backgroundColor: 'transparent',
+                  }}
+                />
               </>
             )}
 
@@ -289,7 +307,6 @@ const Form = () => {
               value={values.email}
               name="email"
               error={Boolean(touched.email) && Boolean(errors.email)}
-              // error={touched.email && errors.email}
               helperText={touched.email && errors.email}
               sx={{
                 gridColumn: "span 4",
