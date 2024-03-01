@@ -32,7 +32,7 @@ const SongsWidget = () => {
                 const response = await axios.get("http://localhost:3001/music/home");
                 const songsData = response.data.results.new_release_albums;
                 setSongs(songsData);
-                // console.log(songsData)
+                console.log(songsData)
             } catch (error) {
                 console.error("Error fetching music data:", error);
             }

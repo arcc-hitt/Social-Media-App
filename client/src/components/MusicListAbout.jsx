@@ -33,20 +33,18 @@ const MusicListAbout = ({ title, author, cover, desc, duration, songs, release }
                     }}
                 >
                     <Box sx={{ display: 'flex', flexDirection: 'column', maxWidth: '70%' }}>
-                        <Tooltip title={title} placement="top">
-                            <Typography
-                                gutterBottom
-                                variant='h2'
-                                sx={{
-                                    color: palette.neutral.dark,
-                                    // overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    // whiteSpace: 'nowrap',
-                                }}
-                            >
-                                {title}
-                            </Typography>
-                        </Tooltip>
+                        <Typography
+                            gutterBottom
+                            variant='h2'
+                            sx={{
+                                color: palette.neutral.dark,
+                                // overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                // whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {title}
+                        </Typography>
                         <Typography
                             gutterBottom
                             variant='h4'
