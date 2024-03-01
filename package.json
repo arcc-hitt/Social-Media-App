@@ -1,8 +1,13 @@
 {
   "dependencies": {
+    "@mui/system": "^5.15.9",
     "free-email-domains": "^1.2.7",
     "is-disposable-email": "^0.0.1",
     "is-email": "^1.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-slick": "^0.30.1",
+    "slick-carousel": "^1.8.1",
     "verifalia": "^4.0.0"
   }
 }

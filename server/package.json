@@ -6,6 +6,7 @@
   "type": "module",
   "dependencies": {
     "@react-oauth/google": "^0.11.1",
+    "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
@@ -14,6 +15,7 @@
     "google-auth-library": "^9.1.0",
     "gridfs-stream": "^1.1.1",
     "helmet": "^7.0.0",
+    "http-proxy-middleware": "^2.0.6",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.1",
     "morgan": "^1.10.0",
@@ -21,7 +23,8 @@
     "multer-gridfs-storage": "^5.0.2",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
-    "react-oauth": "^0.0.1"
+    "react-oauth": "^0.0.1",
+    "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

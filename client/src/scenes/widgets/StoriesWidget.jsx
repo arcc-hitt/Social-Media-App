@@ -49,6 +49,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
+
     const data = await response.json();
     dispatch(setStories({ stories: data }));
   };
@@ -126,7 +127,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                 left: 0,
                 top: "50%",
                 transform: "translateY(-50%)",
-                zIndex: "1000",
+                zIndex: "10000",
               }}
             >
               <NavigateBefore />

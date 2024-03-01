@@ -34,7 +34,20 @@ export const register = async (req, res) => {
       impressions: Math.floor(Math.random() * 10000),
     });
     const savedUser = await newUser.save();
+
     res.status(201).json(savedUser);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Check if the email is already registered
+export const checkEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+    const existingUser = await User.findOne({ email });
+
+    res.json(!existingUser); // Return true if email is unique, false if it already exists
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

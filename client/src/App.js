@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import HomePage from "scenes/homePage";
 import LoginPage from "scenes/loginPage";
 import ProfilePage from "scenes/profilePage";
+import MusicPlayer from "scenes/musicPlayer";
 import { useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -9,6 +10,7 @@ import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 import { useMediaQuery } from '@mui/material';
 import { setMode } from "./state/index";
+import MusicListWidget from "scenes/musicPlayer/MusicListWidget";
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -17,13 +19,13 @@ function App() {
 
   const dispatch = useDispatch();
 
-    useEffect(() => {
-      if (prefersDarkMode) {
-        dispatch(setMode("dark"));
-      } else {
-        dispatch(setMode("light"));
-      }
-    }, [dispatch, prefersDarkMode]);
+  useEffect(() => {
+    if (prefersDarkMode) {
+      dispatch(setMode("dark"));
+    } else {
+      dispatch(setMode("light"));
+    }
+  }, [dispatch, prefersDarkMode]);
 
   const isAuth = Boolean(useSelector((state) => state.token));
 
@@ -41,6 +43,14 @@ function App() {
             <Route
               path="/profile/:userId"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/musicPlayer"
+              element={<MusicPlayer />}
+            />
+            <Route
+              path="/library"
+              element={<MusicListWidget />}
             />
           </Routes>
         </ThemeProvider>

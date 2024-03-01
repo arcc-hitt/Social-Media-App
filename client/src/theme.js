@@ -43,6 +43,11 @@ export const colorTokens = {
 
 // mui theme settings
 export const themeSettings = (mode) => {
+  const vwToPx = (vw) => {
+    const screenWidth = window.innerWidth;
+    return (vw * screenWidth) / 100;
+  };
+
   return {
     palette: {
       mode: mode,
@@ -88,7 +93,7 @@ export const themeSettings = (mode) => {
     },
     typography: {
       fontFamily: ["Rubik", "sans-serif"].join(","),
-      fontSize: 12,
+      fontSize: vwToPx(0.9),
       login: {
         fontFamily: ['Tilt Prism', 'sans-serif'].join(","),
         fontSize: 60,
@@ -96,27 +101,35 @@ export const themeSettings = (mode) => {
       },
       h1: {
         fontFamily: ["Rubik", "sans-serif"].join(","),
-        fontSize: 40,
+        fontSize: '2.65vw',
       },
       h2: {
         fontFamily: ["Rubik", "sans-serif"].join(","),
-        fontSize: 32,
+        fontSize: '2.1vw',
       },
       h3: {
         fontFamily: ["Rubik", "sans-serif"].join(","),
-        fontSize: 24,
+        fontSize: '1.58vw',
       },
       h4: {
         fontFamily: ["Rubik", "sans-serif"].join(","),
-        fontSize: 20,
+        fontSize: '1.3vw',
       },
       h5: {
         fontFamily: ["Rubik", "sans-serif"].join(","),
-        fontSize: 16,
+        fontSize: '1.05vw',
       },
       h6: {
         fontFamily: ["Rubik", "sans-serif"].join(","),
-        fontSize: 14,
+        fontSize: '0.93vw',
+      },
+      subtitle: {
+        fontFamily: ["Rubik", "sans-serif"].join(","),
+        fontSize: '0.7vw',
+      },
+      body: {
+        fontFamily: ["Rubik", "sans-serif"].join(","),
+        fontSize: '0.8vw',
       },
     },
   };

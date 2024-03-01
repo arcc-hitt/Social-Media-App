@@ -76,6 +76,7 @@ const Navbar = ({ userId, picturePath }) => {
       },
       { icon: <Message sx={{ fontSize: "1.6vw" }} />, text: "Messages", onClick: () => { } },
       { icon: <Notifications sx={{ fontSize: "1.6vw" }} />, text: "Notifications", onClick: () => { } },
+      { icon: <Notifications sx={{ fontSize: "1.6vw" }} />, text: "PulseWave Music", onClick: () => navigate("/musicPlayer") },
       {
         icon: <UserImage image={picturePath} size="25px" />,
         text: "My Profile",
