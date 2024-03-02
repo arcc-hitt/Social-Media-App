@@ -20,7 +20,6 @@ const SongsWidget = () => {
     const tracks = useSelector((state) => state.tracks);
 
     const [songs, setSongs] = useState([]);
-    // const [playlistId, setPlaylistId] = useState(null);
 
     const handleClick = (playlistId) => {
         dispatch(setPlaylistId(playlistId));
@@ -32,7 +31,7 @@ const SongsWidget = () => {
                 const response = await axios.get("http://localhost:3001/music/home");
                 const songsData = response.data.results.new_release_albums;
                 setSongs(songsData);
-                console.log(songsData)
+                // console.log(songsData)
             } catch (error) {
                 console.error("Error fetching music data:", error);
             }
@@ -91,7 +90,7 @@ const SongsWidget = () => {
                                 spacing={4}
                                 style={{ width: `${100 / cardsPerPage}%` }}
                                 onClick={() => {
-                                    navigate("/library")
+                                    navigate("/playlistInfo")
                                     handleClick(song.browseId)
                                 }}
                             >

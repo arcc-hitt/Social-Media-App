@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box, Stack, Slide } from '@mui/material';
 import { useSwipeable } from 'react-swipeable';
-import MusicCard from 'components/MusicCard';
 import { useDispatch, useSelector } from "react-redux";
 import { setartists } from "state";
 import axios from 'axios';

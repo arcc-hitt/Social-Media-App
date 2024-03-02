@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import Form from "./Form";
 import { colorTokens } from "theme";
-import RainbowMouseTrail from './RainbowMouseTrail';
-import './RainbowMouseTrail.css';
 
 const LoginPage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1024px)");

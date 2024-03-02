@@ -1,25 +1,29 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, InputBase, InputAdornment, useTheme, Button } from "@mui/material";
-import { Search as SearchIcon, Home as HomeIcon, LibraryMusic as LibraryIcon, Person as PersonIcon, ArrowCircleLeft as ArrowCircleLeftIcon } from "@mui/icons-material";
-import { Box } from '@mui/system';
+import { AppBar, Toolbar, Typography, IconButton, InputBase, InputAdornment, useTheme, Button, Box } from "@mui/material";
+import { Search, Home, LibraryMusic, Person, ArrowCircleLeft, DarkMode, LightMode } from "@mui/icons-material";
 import { useNavigate } from 'react-router-dom';
+import { setMode, setLogout } from "state";
+import { useDispatch } from 'react-redux';
 
 
 const Navbar = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
-    const MenuItem = ({ icon, text, path }) => {
+    const MenuItem = ({ icon, text, handleClick }) => {
         return (
-            <Button color="inherit" sx={{ '&:hover': { cursor: 'pointer' } }} onClick={() => navigate(path)}>
+            <Button color="inherit" sx={{ '&:hover': { cursor: 'pointer' } }} onClick={handleClick}>
                 {icon}
-                <Typography sx={{ color: theme.palette.neutral.dark, marginLeft: '0.5rem' }}>
-                    {text}
-                </Typography>
+                {text && ( // Conditionally render text and apply margin left
+                    <Typography sx={{ color: theme.palette.neutral.dark, marginLeft: '0.5rem' }}>
+                        {text}
+                    </Typography>
+                )}
             </Button>
         );
     }
     return (
-        <AppBar position="fixed">
+        <AppBar position="fixed" sx={{ boxShadow: 'none' }}>
             <Toolbar
                 sx={{
                     backgroundColor: theme.palette.background.default,
@@ -57,17 +61,25 @@ const Navbar = () => {
                         endAdornment={
                             <InputAdornment position="end">
                                 <IconButton size="small" color="inherit">
-                                    <SearchIcon />
+                                    <Search />
                                 </IconButton>
                             </InputAdornment>
                         }
                     />
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <MenuItem icon={<ArrowCircleLeftIcon />} text="Back to PulseWave" path="/home" />
-                    <MenuItem icon={<HomeIcon />} text="Home" path="/musicPlayer" />
-                    <MenuItem icon={<LibraryIcon />} text="Library" path="/library" />
-                    <MenuItem icon={<PersonIcon />} text="Profile" path="/profile" />
+                    <MenuItem icon={<ArrowCircleLeft />} text="Back to PulseWave" handleClick={ () => navigate("/home") } />
+                    <MenuItem icon={<Home />} text="Home" handleClick={ () => navigate("/musicPlayer") } />
+                    <MenuItem icon={<LibraryMusic />} text="Library" handleClick={ () => navigate("/library") } />
+                    <MenuItem icon={<Person />} text="Profile" handleClick={ () => navigate("/profile") } />
+                    <MenuItem
+                        icon={theme.palette.mode === "dark" ? (
+                            <DarkMode sx={{ fontSize: "1.6vw" }} />
+                          ) : (
+                            <LightMode sx={{ fontSize: "1.6vw" }} />
+                          )}
+                        handleClick={ () => dispatch(setMode()) }
+                    />
                 </Box>
             </Toolbar>
         </AppBar>

@@ -10,7 +10,7 @@ import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 import { useMediaQuery } from '@mui/material';
 import { setMode } from "./state/index";
-import MusicListWidget from "scenes/musicPlayer/MusicListWidget";
+import PlaylistWidget from "scenes/musicPlayer/PlaylistWidget";
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -49,8 +49,8 @@ function App() {
               element={<MusicPlayer />}
             />
             <Route
-              path="/library"
-              element={<MusicListWidget />}
+              path="/playlistInfo"
+              element={<PlaylistWidget />}
             />
           </Routes>
         </ThemeProvider>
