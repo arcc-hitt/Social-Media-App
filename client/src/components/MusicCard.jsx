@@ -18,6 +18,7 @@ const MusicCard = ({ title, artist, imagePath }) => {
       <CardMedia
         sx={{ height: 150 }}
         image={imagePath || "/assets/761.jpg"}
+        alt='Album image'
       />
       <CardContent sx={{ pt: '0.5rem', px: 0, pb: 0 }}>
         <Typography

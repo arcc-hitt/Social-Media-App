@@ -28,8 +28,9 @@ const SongsWidget = () => {
     useEffect(() => {
         const fetchMusicData = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/music/home");
-                const songsData = response.data.results.new_release_albums;
+                const response = await axios.get("http://localhost:3001/music/topArtists");
+                // const songsData = response.data.results.new_release_albums;
+                const songsData = response.data;
                 setSongs(songsData);
                 // console.log(songsData)
             } catch (error) {
@@ -96,9 +97,11 @@ const SongsWidget = () => {
                             >
                                 <MusicCard
                                     key={index}
-                                    title={song.title}
+                                    // title={song.title}
+                                    title={song.artist}
                                     artist={song.subtitle}
-                                    imagePath={song.thumbnail}
+                                    // imagePath={song.thumbnail}
+                                    imagePath={'/assets/761.jpg'}
                                 />
                             </Stack>
                         </Slide>

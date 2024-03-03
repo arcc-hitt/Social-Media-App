@@ -39,6 +39,7 @@ const Navbar = () => {
                     >
                         <img
                             src='assets/music_logo.png'
+                            alt='Music Logo'
                             width='200vw'
                             height='auto'
                             onClick={ () => navigate('/musicPlayer')}

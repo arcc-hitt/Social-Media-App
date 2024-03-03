@@ -44,6 +44,7 @@ const CategoryWidget = () => {
     //             const categoriesData = response.data.results.mood_and_genres;
     //             setMoods(categoriesData[0].gridRenderer.items);
     //             setGenres(categoriesData[1].gridRenderer.items);
+    //             console.log(categoriesData);
     //         } catch (error) {
     //             console.error("Error fetching music data:", error);
     //         }
@@ -78,10 +79,9 @@ const CategoryWidget = () => {
             <MusicWidgetTitle title='Moods & Genres' />
             <Grid
                 container
-                spacing={4}
-                sx={{
-                    flex: 1
-                }}
+                spacing={3}
+                alignItems='space-evenly'
+                flex={1}
             >
                 {categories.slice(0, 9).map((category, index) => (
                     <Grid key={index} item xs={6} sm={4}>
