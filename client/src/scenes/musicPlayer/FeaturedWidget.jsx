@@ -14,7 +14,7 @@ const FeaturedWidget = () => {
   const [currentIndex, setCurrentIndex] = useState();
 
   const handleClick = (playlistId) => {
-      dispatch(setPlaylistId(playlistId));
+    dispatch(setPlaylistId(playlistId));
   };
 
   // useEffect(() => {
@@ -49,26 +49,27 @@ const FeaturedWidget = () => {
       indicators={true}
       onChange={handleCarouselChange}
       indicatorIconButtonProps={{
-          style: {
-              padding: '10px',
-              color: 'blue'
+        sx: {
+          '&:hover': {
+            color: 'white'
           }
+        },
       }}
       activeIndicatorIconButtonProps={{
-          style: {
-              backgroundColor: 'red'
-          }
+        style: {
+          backgroundColor: 'white',
+        }
       }}
       indicatorContainerProps={{
-          style: {
-              position: 'absolute',
-              bottom: '1rem',
-              left: '2rem',
-              margin: '0',
-              textAlign: 'left',
-              zIndex: '1000',
-          }
-  
+        style: {
+          position: 'absolute',
+          bottom: '1rem',
+          left: '2rem',
+          margin: '0',
+          textAlign: 'left',
+          zIndex: '1000',
+        }
+
       }}
     >
       {songs.map((song, index) => (
@@ -80,8 +81,8 @@ const FeaturedWidget = () => {
             cursor: 'pointer',
           }}
           onClick={() => {
-              navigate("/playlistInfo")
-              handleClick(song.playlistId)
+            navigate("/playlistInfo")
+            handleClick(song.playlistId)
           }}
         >
           <FeaturedCard

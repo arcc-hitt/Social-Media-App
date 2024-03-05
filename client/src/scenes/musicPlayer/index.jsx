@@ -2,10 +2,11 @@ import { Box, useMediaQuery } from "@mui/material";
 import SongsWidget from "./SongsWidget";
 import FeaturedWidget from "./FeaturedWidget";
 import CategoryWidget from "./CategoryWidget";
-import ArtistsWidget from "scenes/musicPlayer/ArtistsWidget";
+import ArtistsWidget from "./ArtistsWidget";
 import Navbar from "./Navbar";
+import MusicPlayer from "./MusicPlayer";
 
-const MusicPlayer = () => {
+const MusicPlayerHome = () => {
     const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
     return (
@@ -33,10 +34,13 @@ const MusicPlayer = () => {
                     <Box gridColumn="span 12">
                         <ArtistsWidget />
                     </Box>
+                    <Box gridColumn="span 12">
+                        <MusicPlayer />
+                    </Box>
                 </Box>
             </Box>
         </>
     );
 }
 
-export default MusicPlayer;
+export default MusicPlayerHome;

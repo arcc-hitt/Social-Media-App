@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import HomePage from "scenes/homePage";
 import LoginPage from "scenes/loginPage";
 import ProfilePage from "scenes/profilePage";
-import MusicPlayer from "scenes/musicPlayer";
+import MusicPlayerHome from "scenes/musicPlayer";
 import { useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -46,7 +46,7 @@ function App() {
             />
             <Route
               path="/musicPlayer"
-              element={<MusicPlayer />}
+              element={<MusicPlayerHome />}
             />
             <Route
               path="/playlistInfo"
