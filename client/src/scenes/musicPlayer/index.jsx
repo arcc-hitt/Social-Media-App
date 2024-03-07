@@ -16,6 +16,7 @@ const MusicPlayerHome = () => {
                     width: '100%',
                     padding: '2rem',
                     overflow: 'hidden',
+                    pb: '5rem',
                 }}
             >
                 <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={3}>

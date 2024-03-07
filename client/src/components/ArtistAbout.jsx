@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, CardContent, CardMedia, Typography, useTheme } from '@mui/material';
 import { Box } from '@mui/system';
 
-const PlaylistAbout = ({ title, author, cover, desc, duration, songs, release }) => {
+const ArtistAbout = ({ title, cover, desc, views }) => {
     const { palette } = useTheme();
     return (
         <Card
@@ -45,18 +45,6 @@ const PlaylistAbout = ({ title, author, cover, desc, duration, songs, release })
                         >
                             {title}
                         </Typography>
-                        <Typography
-                            gutterBottom
-                            variant='h4'
-                            sx={{
-                                color: palette.neutral.mediumMain,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                            }}
-                        >
-                            {author}
-                        </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: 'auto' }}>
                         <Typography
@@ -69,31 +57,7 @@ const PlaylistAbout = ({ title, author, cover, desc, duration, songs, release })
                                 whiteSpace: 'nowrap',
                             }}
                         >
-                            Total Duration: {duration}
-                        </Typography>
-                        <Typography
-                            gutterBottom
-                            variant='subtitle'
-                            sx={{
-                                color: palette.neutral.mediumMain,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                            }}
-                        >
-                            Total Songs: {songs}
-                        </Typography>
-                        <Typography
-                            gutterBottom
-                            variant='subtitle'
-                            sx={{
-                                color: palette.neutral.mediumMain,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                            }}
-                        >
-                            Album Release: {release}
+                            {views}
                         </Typography>
                     </Box>
                 </Box>
@@ -113,4 +77,4 @@ const PlaylistAbout = ({ title, author, cover, desc, duration, songs, release })
     );
 }
 
-export default PlaylistAbout;
+export default ArtistAbout;

@@ -10,6 +10,7 @@ const initialState = {
   stories: [],
   tracks: [],
   playlistId: null,
+  channelId: null,
 };
 
 export const authSlice = createSlice({
@@ -60,6 +61,9 @@ export const authSlice = createSlice({
     setPlaylistId: (state, action) => {
       state.playlistId = action.payload;
     },
+    setChannelId: (state, action) => {
+      state.channelId = action.payload;
+    },
   },
 });
 
@@ -74,6 +78,7 @@ export const {
   setStory,
   setTracks,
   setPlaylistId,
+  setChannelId,
 } = authSlice.actions;
 
 export default authSlice.reducer;

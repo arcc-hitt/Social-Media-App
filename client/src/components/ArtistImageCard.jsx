@@ -7,6 +7,7 @@ const Container = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   textAlign: 'center',
+  cursor: 'pointer',
 }));
 
 const AvatarImage = styled(Avatar)(({ theme }) => ({  
@@ -22,8 +23,8 @@ const ArtistImageCard = ({ title, imagePath }) => {
     <Container>
       <AvatarImage
         alt='Artist Image'
-        src='/assets/761.jpg'
-        // src={imagePath}
+        // src='/assets/761.jpg'
+        src={imagePath}
       />
       <Typography variant="h5" component="h2">
         {title}

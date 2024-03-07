@@ -15,7 +15,7 @@ const PlaylistWidget = () => {
     useEffect(() => {
         const fetchPlaylistInfo = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/music/${playlistId}`);
+                const response = await axios.get(`http://localhost:3001/music/getPlaylistInfo/${playlistId}`);
                 setPlaylistInfo(response.data.results);
                 setAboutInfo(response.data);
                 // console.log(response.data);
