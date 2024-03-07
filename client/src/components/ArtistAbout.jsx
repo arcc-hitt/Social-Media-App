@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, CardContent, CardMedia, Typography, useTheme } from '@mui/material';
 import { Box } from '@mui/system';
 
-const ArtistAbout = ({ title, cover, desc, views }) => {
+const ArtistAbout = ({ title, titleHeader, cover, desc, subscribers, views, }) => {
     const { palette } = useTheme();
     return (
         <Card
@@ -57,10 +57,34 @@ const ArtistAbout = ({ title, cover, desc, views }) => {
                                 whiteSpace: 'nowrap',
                             }}
                         >
+                            {subscribers} Subscribers
+                        </Typography>
+                        <Typography
+                            gutterBottom
+                            variant='subtitle'
+                            sx={{
+                                color: palette.neutral.mediumMain,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
                             {views}
                         </Typography>
                     </Box>
                 </Box>
+                <Typography
+                    gutterBottom
+                    variant='h4'
+                    sx={{
+                        color: palette.neutral.medium,
+                        // overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        // whiteSpace: 'nowrap',
+                    }}
+                >
+                    {titleHeader}
+                </Typography>
                 <Typography
                     gutterBottom
                     variant='body'

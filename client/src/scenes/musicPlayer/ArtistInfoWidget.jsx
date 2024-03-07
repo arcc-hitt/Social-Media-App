@@ -33,11 +33,11 @@ const ArtistInfoWidget = () => {
                 </Box>
                 <Box gridColumn="span 7">
                     {['songs', 'albums', 'singles', 'videos', 'featured_on'].map((category, index) => (
-                        <Stack key={index} direction="column" spacing={1}>
+                        <Stack key={index} direction="column" spacing={1} mb='1rem'>
                             <Typography variant="h3">
-                                {artistInfo[category].titleHeader}
+                                {artistInfo[category]?.titleHeader || 'Title Header Not Available'}
                             </Typography>
-                            <ArtistInfo items={artistInfo[category].contents} />
+                            <ArtistInfo items={artistInfo[category]?.contents || []} />
                         </Stack>
                     ))}
                 </Box>
@@ -45,9 +45,11 @@ const ArtistInfoWidget = () => {
                 <Box gridColumn='span 5'>
                     <ArtistAbout
                         title={artistInfo.title}
+                        titleHeader={artistInfo.about?.titleHeader || 'Title Header Not Available'}
                         cover={artistInfo.thumbnail}
                         desc={artistInfo.description}
-                        views={artistInfo.about.titleSubheader}
+                        subscribers={artistInfo.subscriberCount}
+                        views={artistInfo.about?.titleSubheader || 'Views Not Available'}
                     />
                 </Box>
             </Box>

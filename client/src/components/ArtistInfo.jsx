@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 
 const ArtistInfo = ({ items }) => {
     return (
-        <List sx={{ width: '100%', bgcolor: 'inherit' }}>
+        <List sx={{ width: '100%', bgcolor: 'inherit', marginBottom: '5rem' }}>
             {items.map((item, index) => (
                 <React.Fragment key={index}>
                     <ListItem alignItems="flex-start">
