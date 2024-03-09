@@ -31,7 +31,7 @@ const ArtistsWidget = () => {
                 const artistsData = response.data.results.charts.top_artist.list;
                 // const artistsData = response.data;
                 setArtists(artistsData);
-                console.log(artistsData);
+                // console.log(artistsData);
             } catch (error) {
                 console.error("Error fetching music data:", error);
             }

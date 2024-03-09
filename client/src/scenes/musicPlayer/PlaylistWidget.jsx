@@ -10,7 +10,7 @@ const PlaylistWidget = () => {
     const [playlistInfo, setPlaylistInfo] = useState([]);
     const [aboutInfo, setAboutInfo] = useState({});
     const playlistId = useSelector((state) => state.playlistId);
-    console.log(playlistId);
+    // console.log(playlistId);
 
     useEffect(() => {
         const fetchPlaylistInfo = async () => {

@@ -11,6 +11,9 @@ const initialState = {
   tracks: [],
   playlistId: null,
   channelId: null,
+  songId: null,
+  paused: true,
+  playingIndex: null,
 };
 
 export const authSlice = createSlice({
@@ -64,6 +67,15 @@ export const authSlice = createSlice({
     setChannelId: (state, action) => {
       state.channelId = action.payload;
     },
+    setSongId: (state, action) => {
+      state.songId = action.payload;
+    },
+    setPaused: (state, action) => {
+      state.paused = action.payload;
+    },
+    setPlayingIndex: (state, action) => {
+      state.playingIndex = action.payload;
+    },
   },
 });
 
@@ -79,6 +91,9 @@ export const {
   setTracks,
   setPlaylistId,
   setChannelId,
+  setSongId,
+  setPaused,
+  setPlayingIndex,
 } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -5,11 +5,12 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import ArtistInfo from "components/ArtistInfo";
 import ArtistAbout from "components/ArtistAbout";
+import MusicPlayer from "./MusicPlayer";
 
 const ArtistInfoWidget = () => {
     const [artistInfo, setArtistInfo] = useState({});
     const channelId = useSelector((state) => state.channelId);
-    console.log(channelId);
+    // console.log(channelId);
 
     useEffect(() => {
         const fetchArtistInfo = async () => {
@@ -22,8 +23,7 @@ const ArtistInfoWidget = () => {
             }
         };
         fetchArtistInfo();
-    }, [channelId]);
-    console.log(artistInfo);
+    }, []);
 
     return (
         <Box sx={{ width: '100%', padding: '2rem', overflow: 'hidden' }}>
@@ -51,6 +51,10 @@ const ArtistInfoWidget = () => {
                         subscribers={artistInfo.subscriberCount}
                         views={artistInfo.about?.titleSubheader || 'Views Not Available'}
                     />
+                </Box>
+
+                <Box gridColumn='span 12'>
+                    <MusicPlayer />
                 </Box>
             </Box>
         </Box>

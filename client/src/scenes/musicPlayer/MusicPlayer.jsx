@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import {
     Box,
@@ -16,19 +16,9 @@ import {
     VolumeUpRounded,
     VolumeDownRounded,
 } from '@mui/icons-material';
-
-import { css } from '@emotion/react';
-
-const pulseAnimation = css`
-    @keyframes zigzag {
-        from {
-          transform: translateX(-50%) scaleX(0.9); // Start at left edge, compressed
-        }
-        to {
-          transform: translateX(50%) scaleX(1.1); // Move to right edge, stretched
-        }
-    }
-`;
+import { setPaused, setSongId } from 'state';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Widget = styled('Box')(() => ({
     padding: '0.5rem',
@@ -97,18 +87,39 @@ const TinyText = styled(Typography)({
 });
 
 const MusicPlayer = () => {
+    const dispatch = useDispatch();
     const theme = useTheme();
-    const duration = 200;
     const [position, setPosition] = useState(0);
-    const [paused, setPaused] = useState(true);
+    const paused = useSelector((state) => state.paused);
+    const mainIconColor = theme.palette.neutral.dark;
+    const lightIconColor = theme.palette.neutral.main;
+
+    const songId = useSelector((state) => state.songId);
+    console.log(songId);
+    const [musicInfo, setMusicInfo] = useState({});
+
+    useEffect(() => {
+        const fetchMusicInfo = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/music/getMusicInfo/${songId}`);
+                setMusicInfo(response.data);
+                console.log(musicInfo);
+            } catch (error) {
+                console.error("Error fetching artist information:", error);
+            }
+        };
+        if (songId) {
+            fetchMusicInfo();
+        }
+    }, [songId]);
+
+    const duration = musicInfo.basic_info?.duration || 200;
     function formatDuration(value) {
         const minute = Math.floor(value / 60);
         const secondLeft = value - minute * 60;
         return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
     }
-    const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
-    const lightIconColor =
-        theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+
     return (
         <Box sx={{ width: '100%', overflow: 'hidden' }}>
             <Widget>
@@ -117,21 +128,49 @@ const MusicPlayer = () => {
                     <CoverImage>
                         <img
                             alt="Cover Picture"
-                            src='/assets/761.jpg'
+                            src={musicInfo.basic_info?.thumbnail[1].url || '/assets/761.jpg'}
                             style={{
-                                objectFit: 'fill',
+                                objectFit: 'cover',
                             }}
                         />
                     </CoverImage>
                     <Box ml='0.5rem' >
-                        <Typography variant="subtitle" color={theme.palette.neutral.main} fontWeight={500}>
-                            Alan Walker
+                        <Typography
+                            variant="subtitle"
+                            color={theme.palette.neutral.main}
+                            fontWeight={500}
+                            sx={{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {musicInfo.basic_info?.author || 'Artist'}
                         </Typography>
-                        <Typography noWrap variant='h5' color={theme.palette.neutral.dark} fontWeight={500}>
-                            Faded
+                        <Typography
+                            noWrap
+                            variant='h5'
+                            color={theme.palette.neutral.dark}
+                            fontWeight={500}
+                            sx={{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {musicInfo.basic_info?.title || 'Song'}
                         </Typography>
-                        <Typography noWrap variant='h6' color={theme.palette.neutral.dark}>
-                            Single
+                        <Typography
+                            noWrap
+                            variant='h6'
+                            color={theme.palette.neutral.dark}
+                            sx={{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {musicInfo.basic_info?.tags[musicInfo.basic_info.tags.length - 2] || 'Type'}
                         </Typography>
                     </Box>
                 </SongDetailsContainer>
@@ -143,7 +182,9 @@ const MusicPlayer = () => {
                     </IconButton>
                     <IconButton
                         aria-label={paused ? 'play' : 'pause'}
-                        onClick={() => setPaused(!paused)}
+                        onClick={() => 
+                            dispatch(setPaused(!paused)
+                        )}
                     >
                         {paused ? (
                             <PlayArrowRounded

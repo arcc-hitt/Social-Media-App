@@ -88,6 +88,7 @@ export const getMusicInfo = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch music data' });
     }
 };
+
 export const getTopArtists = async (req, res) => {
     const options = {
         method: 'GET',
