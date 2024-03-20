@@ -89,6 +89,52 @@ export const getMusicInfo = async (req, res) => {
     }
 };
 
+export const getNextMusicInfo = async (req, res) => {
+    const { songId } = req.params;
+    const options = {
+        method: 'GET',
+        url: 'https://youtube-music-api3.p.rapidapi.com/next',
+        params: {
+            id: songId
+        },
+        headers: {
+            'X-RapidAPI-Key': '9e0941911amsh5537bd8bff0a4f6p1facc2jsn61fb54f8b474',
+            'X-RapidAPI-Host': 'youtube-music-api3.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await axios.request(options);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch music data' });
+    }
+};
+
+export const getMusicLyrics = async (req, res) => {
+    const { songId } = req.params;
+    const options = {
+        method: 'GET',
+        url: 'https://youtube-music-api3.p.rapidapi.com/music/lyrics/plain',
+        params: {
+            id: songId
+        },
+        headers: {
+            'X-RapidAPI-Key': '9e0941911amsh5537bd8bff0a4f6p1facc2jsn61fb54f8b474',
+            'X-RapidAPI-Host': 'youtube-music-api3.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await axios.request(options);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch music data' });
+    }
+};
+
 export const getTopArtists = async (req, res) => {
     const options = {
         method: 'GET',

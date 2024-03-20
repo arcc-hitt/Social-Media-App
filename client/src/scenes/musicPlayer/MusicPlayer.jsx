@@ -7,6 +7,16 @@ import {
     IconButton,
     Stack,
     useTheme,
+    Card,
+    CardMedia,
+    CardContent,
+    Grid,
+    ListItemText,
+    ListItemAvatar,
+    ListItem,
+    List,
+    Avatar,
+    Divider,
 } from '@mui/material';
 import {
     PauseRounded,
@@ -15,28 +25,55 @@ import {
     FastRewindRounded,
     VolumeUpRounded,
     VolumeDownRounded,
+    ExpandLessRounded,
+    PauseCircleOutline,
+    PlayCircleOutline,
 } from '@mui/icons-material';
-import { setPaused, setSongId } from 'state';
+import { setPaused, setSongId, setPlayingIndex } from 'state';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 
-const Widget = styled('Box')(() => ({
+const Widget = styled('Box')({
     padding: '0.5rem',
     width: '100%',
+    height: '13%',
     position: 'fixed',
     bottom: 0,
     left: 'auto',
     right: 0,
     display: 'flex',
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: '2rem',
-    zIndex: 1,
+    zIndex: 2,
     backgroundColor: `rgba(255, 255, 255, 0.15)`,
     backdropFilter: `blur( 4px )`,
     '-webkit-backdrop-filter': `blur( 4px )`,
-}));
+});
+
+const ExpandedWidget = styled('Box')({
+    padding: '1rem',
+    paddingBottom: '11.65%',
+    width: '100%',
+    height: '100vh',
+    position: 'fixed',
+    bottom: 0,
+    left: 'auto',
+    right: 0,
+    top: 62,
+    display: 'grid',
+    gridTemplateColumns: 'repeat(12, 1fr)',
+    gridTemplateRows: 'repeat(12, 1fr)',
+    gap: 20,
+    alignItems: 'start',
+    alignContent: 'space-between',
+    justifyContent: 'space-between',
+    justifyItems: 'start',
+    zIndex: 2,
+    backgroundColor: `rgba(255, 255, 255, 0.15)`,
+    backdropFilter: `blur( 4px )`,
+    '-webkit-backdrop-filter': `blur( 4px )`,
+});
 
 const CoverImage = styled('Box')({
     width: '5vw',
@@ -57,6 +94,7 @@ const SongDetailsContainer = styled('Box')({
     alignItems: 'center',
     width: '100%',
     flexBasis: '15%',
+    overflow: 'hidden',
 });
 
 const NavigationContainer = styled('Box')({
@@ -97,6 +135,23 @@ const MusicPlayer = () => {
     const songId = useSelector((state) => state.songId);
     console.log(songId);
     const [musicInfo, setMusicInfo] = useState({});
+    const [expanded, setExpanded] = useState(false);
+    const [nextMusicInfo, setNextMusicInfo] = useState([]);
+    const currentPlayingIndex = useSelector((state) => state.playingIndex);
+    // const paused = useSelector((state) => state.paused);
+    const [lyrics, setLyrics] = useState({});
+
+    const handlePlayPause = (index, videoId) => {
+        if (currentPlayingIndex === index) {
+            dispatch(setSongId(null));
+            dispatch(setPlayingIndex(null)); // Pause if it's already playing
+            dispatch(setPaused(true));
+        } else {
+            dispatch(setSongId(videoId)); // Set the new song
+            dispatch(setPlayingIndex(index)); // Update currently playing index
+            dispatch(setPaused(false));
+        }
+    };
 
     useEffect(() => {
         const fetchMusicInfo = async () => {
@@ -104,6 +159,36 @@ const MusicPlayer = () => {
                 const response = await axios.get(`http://localhost:3001/music/getMusicInfo/${songId}`);
                 setMusicInfo(response.data);
                 console.log(musicInfo);
+            } catch (error) {
+                console.error("Error fetching artist information:", error);
+            }
+        };
+        if (songId) {
+            fetchMusicInfo();
+        }
+    }, [songId]);
+
+    useEffect(() => {
+        const fetchMusicInfo = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/music/getNextMusicInfo/${songId}`);
+                setNextMusicInfo(response.data);
+                console.log(setNextMusicInfo);
+            } catch (error) {
+                console.error("Error fetching artist information:", error);
+            }
+        };
+        if (songId) {
+            fetchMusicInfo();
+        }
+    }, [songId]);
+
+    useEffect(() => {
+        const fetchMusicInfo = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/music/getMusicLyrics/${songId}`);
+                setLyrics(response.data);
+                console.log(setLyrics);
             } catch (error) {
                 console.error("Error fetching artist information:", error);
             }
@@ -121,54 +206,197 @@ const MusicPlayer = () => {
     }
 
     return (
-        <Box sx={{ width: '100%', overflow: 'hidden' }}>
+        <Box sx={{ width: '100%', height: 'auto', overflow: 'hidden', position: 'relative', flex: 1 }}>
+            {expanded && (
+                <ExpandedWidget expanded={expanded}>
+                    {/* About */}
+                    <Box
+                        gridColumn="span 6"
+                        gridRow="span 6"
+                        sx={{
+                            alignItems: 'flex-start',
+                            display: 'flex',
+                            width: '100%',
+                            flex: 1,
+                        }}
+                    >
+                        <CoverImage
+                            sx={{
+                                width: '18vw',
+                                height: '18vw',
+                            }}
+                        >
+                            <img
+                                alt="Cover Picture"
+                                src={musicInfo.basic_info?.thumbnail[1].url || '/assets/album_default.png'}
+                                style={{
+                                    objectFit: 'cover',
+                                }}
+                            />
+                        </CoverImage>
+                        <Box
+                            ml='0.5rem'
+                            alignItems='flex-start'
+                            overflow='hidden'
+                        >
+                            <Typography
+                                gutterBottom
+                                noWrap
+                                ellipsis
+                                overflow='hidden'
+                                variant="h4"
+                                color={theme.palette.neutral.main}
+                                fontWeight={500}
+                            >
+                                {musicInfo.basic_info?.author || 'Artist'}
+                            </Typography>
+                            <Typography
+                                noWrap
+                                ellipsis
+                                overflow='hidden'
+                                variant='h2'
+                                color={theme.palette.neutral.dark}
+                                fontWeight={500}
+                            >
+                                {musicInfo.basic_info?.title || 'Song'}
+                            </Typography>
+                            <Typography
+                                gutterBottom
+                                noWrap
+                                ellipsis
+                                overflow='hidden'
+                                variant='h4'
+                                color={theme.palette.neutral.dark}
+                            >
+                                {musicInfo.basic_info?.tags[musicInfo.basic_info.tags.length - 2] || 'Type'}
+                            </Typography>
+                            <Typography
+                                gutterBottom
+                                ellipsis
+                                variant='body'
+                                color={theme.palette.neutral.mediumMain}
+                            >
+                                {musicInfo.basic_info?.description || 'Description'}
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    
+                    {/* Up next */}
+                    <Box
+                        gridColumn="span 6"
+                        gridRow="span 12"
+                        sx={{
+                            width: '100%',
+                        }}
+                    >
+                        <Typography
+                            noWrap
+                            ellipsis
+                            overflow='hidden'
+                            variant='h3'
+                            color={theme.palette.neutral.dark}
+                            fontWeight={500}
+                        >
+                            Up next
+                        </Typography>
+                        <List sx={{ width: '100%', bgcolor: 'inherit', marginBottom: '5rem', }}>
+                            {nextMusicInfo.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <ListItem
+                                        alignItems="flex-start"
+                                        secondaryAction={
+                                            <IconButton
+                                                edge="end"
+                                                aria-label="play/pause"
+                                                onClick={() => handlePlayPause(index, item.videoId)}
+                                            >
+                                                {currentPlayingIndex === index ? (
+                                                    <PauseCircleOutline />
+                                                ) : (
+                                                    <PlayCircleOutline />
+                                                )}
+                                            </IconButton>
+                                        }
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar alt={item.title} src={item.thumbnail} />
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={item.title}
+                                            secondary={
+                                                <React.Fragment>
+                                                    <Typography
+                                                        sx={{ display: 'inline' }}
+                                                        component="span"
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                    >
+                                                        {item.author}
+                                                    </Typography>
+                                                </React.Fragment>
+                                            }
+                                        />
+                                    </ListItem>
+                                    <Divider variant="inset" component="li" />
+                                </React.Fragment>
+                            ))}
+                        </List>
+                    </Box>
+                    
+                    {/* Lyrics */}
+                    <Box gridColumn='span 6' gridRow="span 6">
+                            <Typography
+                                gutterBottom
+                                ellipsis
+                                variant='body'
+                                color={theme.palette.neutral.mediumMain}
+                            >
+                                {lyrics.description.text || 'Lyrics Not Available'}
+                            </Typography>
+                    </Box>
+                </ExpandedWidget>
+            )}
+            {/* Shrunken Widget */}
             <Widget>
                 {/* Song Details */}
                 <SongDetailsContainer>
                     <CoverImage>
                         <img
                             alt="Cover Picture"
-                            src={musicInfo.basic_info?.thumbnail[1].url || '/assets/761.jpg'}
+                            src={musicInfo.basic_info?.thumbnail[0].url || '/assets/album_default.png'}
                             style={{
                                 objectFit: 'cover',
                             }}
                         />
                     </CoverImage>
-                    <Box ml='0.5rem' >
+                    <Box ml='0.5rem' overflow='hidden' >
                         <Typography
+                            noWrap
+                            ellipsis
+                            overflow='hidden'
                             variant="subtitle"
                             color={theme.palette.neutral.main}
                             fontWeight={500}
-                            sx={{
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                            }}
                         >
                             {musicInfo.basic_info?.author || 'Artist'}
                         </Typography>
                         <Typography
                             noWrap
+                            ellipsis
+                            overflow='hidden'
                             variant='h5'
                             color={theme.palette.neutral.dark}
                             fontWeight={500}
-                            sx={{
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                            }}
                         >
                             {musicInfo.basic_info?.title || 'Song'}
                         </Typography>
                         <Typography
                             noWrap
+                            ellipsis
+                            overflow='hidden'
                             variant='h6'
                             color={theme.palette.neutral.dark}
-                            sx={{
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                            }}
                         >
                             {musicInfo.basic_info?.tags[musicInfo.basic_info.tags.length - 2] || 'Type'}
                         </Typography>
@@ -182,9 +410,9 @@ const MusicPlayer = () => {
                     </IconButton>
                     <IconButton
                         aria-label={paused ? 'play' : 'pause'}
-                        onClick={() => 
+                        onClick={() =>
                             dispatch(setPaused(!paused)
-                        )}
+                            )}
                     >
                         {paused ? (
                             <PlayArrowRounded
@@ -274,6 +502,12 @@ const MusicPlayer = () => {
                     />
                     <VolumeUpRounded htmlColor={lightIconColor} />
                 </VolumeContainer>
+                <IconButton
+                    aria-label="expand-less"
+                    onClick={() => setExpanded(!expanded)} // Toggle expanded state
+                >
+                    <ExpandLessRounded fontSize="large" htmlColor={mainIconColor} />
+                </IconButton>
             </Widget>
         </Box>
     );

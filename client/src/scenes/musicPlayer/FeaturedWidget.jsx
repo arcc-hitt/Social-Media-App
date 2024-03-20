@@ -67,7 +67,7 @@ const FeaturedWidget = () => {
           left: '2rem',
           margin: '0',
           textAlign: 'left',
-          zIndex: '1000',
+          zIndex: 1,
         }
 
       }}

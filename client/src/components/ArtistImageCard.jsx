@@ -23,7 +23,7 @@ const ArtistImageCard = ({ title, imagePath }) => {
     <Container>
       <AvatarImage
         alt='Artist Image'
-        // src='/assets/761.jpg'
+        // src='/assets/artist_default_2.png'
         src={imagePath}
       />
       <Typography variant="h5" component="h2">

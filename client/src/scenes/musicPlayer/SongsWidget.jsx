@@ -101,7 +101,7 @@ const SongsWidget = () => {
                                     title={song.artist}
                                     artist={song.subtitle}
                                     // imagePath={song.thumbnail}
-                                    imagePath={'/assets/761.jpg'}
+                                    imagePath={'/assets/album_default_2.png'}
                                 />
                             </Stack>
                         </Slide>

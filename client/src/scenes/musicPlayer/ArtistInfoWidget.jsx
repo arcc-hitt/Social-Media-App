@@ -17,7 +17,7 @@ const ArtistInfoWidget = () => {
             try {
                 const response = await axios.get(`http://localhost:3001/music/getArtistInfo/${channelId}`);
                 setArtistInfo(response.data);
-                console.log(response.data);
+                // console.log(response.data);
             } catch (error) {
                 console.error("Error fetching artist information:", error);
             }
@@ -46,7 +46,7 @@ const ArtistInfoWidget = () => {
                     <ArtistAbout
                         title={artistInfo.title}
                         titleHeader={artistInfo.about?.titleHeader || 'Title Header Not Available'}
-                        cover={artistInfo.thumbnail}
+                        cover={artistInfo?.thumbnail || '/assets/artist_default.png'}
                         desc={artistInfo.description}
                         subscribers={artistInfo.subscriberCount}
                         views={artistInfo.about?.titleSubheader || 'Views Not Available'}
