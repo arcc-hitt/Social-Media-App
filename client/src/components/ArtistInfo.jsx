@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const ArtistInfo = ({ items }) => {
     const dispatch = useDispatch();
     const currentPlayingIndex = useSelector((state) => state.playingIndex);
+    const songId = useSelector((state) => state.songId);
     // const paused = useSelector((state) => state.paused);
 
     const handlePlayPause = (index, videoId) => {
@@ -39,7 +40,7 @@ const ArtistInfo = ({ items }) => {
                                 aria-label="play/pause"
                                 onClick={() => handlePlayPause(index, item.videoId)}
                             >
-                                {currentPlayingIndex === index ? (
+                                {currentPlayingIndex === index && songId === item.videoId ? (
                                     <PauseCircleOutline />
                                 ) : (
                                     <PlayCircleOutline />

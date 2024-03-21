@@ -138,7 +138,6 @@ const MusicPlayer = () => {
     const [expanded, setExpanded] = useState(false);
     const [nextMusicInfo, setNextMusicInfo] = useState([]);
     const currentPlayingIndex = useSelector((state) => state.playingIndex);
-    // const paused = useSelector((state) => state.paused);
     const [lyrics, setLyrics] = useState({});
 
     const handlePlayPause = (index, videoId) => {
@@ -173,7 +172,7 @@ const MusicPlayer = () => {
             try {
                 const response = await axios.get(`http://localhost:3001/music/getNextMusicInfo/${songId}`);
                 setNextMusicInfo(response.data);
-                console.log(setNextMusicInfo);
+                console.log(nextMusicInfo);
             } catch (error) {
                 console.error("Error fetching artist information:", error);
             }
@@ -188,7 +187,7 @@ const MusicPlayer = () => {
             try {
                 const response = await axios.get(`http://localhost:3001/music/getMusicLyrics/${songId}`);
                 setLyrics(response.data);
-                console.log(setLyrics);
+                console.log(lyrics);
             } catch (error) {
                 console.error("Error fetching artist information:", error);
             }
@@ -265,7 +264,7 @@ const MusicPlayer = () => {
                                 noWrap
                                 ellipsis
                                 overflow='hidden'
-                                variant='h4'
+                                variant='h5'
                                 color={theme.palette.neutral.dark}
                             >
                                 {musicInfo.basic_info?.tags[musicInfo.basic_info.tags.length - 2] || 'Type'}
@@ -311,7 +310,7 @@ const MusicPlayer = () => {
                                                 aria-label="play/pause"
                                                 onClick={() => handlePlayPause(index, item.videoId)}
                                             >
-                                                {currentPlayingIndex === index ? (
+                                                {currentPlayingIndex === index && songId === item.videoId ? (
                                                     <PauseCircleOutline />
                                                 ) : (
                                                     <PlayCircleOutline />
@@ -345,14 +344,19 @@ const MusicPlayer = () => {
                     </Box>
                     
                     {/* Lyrics */}
-                    <Box gridColumn='span 6' gridRow="span 6">
+                    <Box
+                        gridColumn='span 6'
+                        gridRow="span 6"
+                        overflow="hidden"
+                    >
                             <Typography
-                                gutterBottom
+                                // noWrap
                                 ellipsis
+                                overflow='hidden'
                                 variant='body'
                                 color={theme.palette.neutral.mediumMain}
                             >
-                                {lyrics.description.text || 'Lyrics Not Available'}
+                                {lyrics.description?.text || 'Lyrics Not Available'}
                             </Typography>
                     </Box>
                 </ExpandedWidget>
