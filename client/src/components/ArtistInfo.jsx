@@ -18,16 +18,12 @@ const ArtistInfo = ({ items }) => {
     // const paused = useSelector((state) => state.paused);
 
     const handlePlayPause = (index, videoId) => {
-        if (currentPlayingIndex === index) {
-            dispatch(setSongId(null));
-            dispatch(setPlayingIndex(null)); // Pause if it's already playing
-            dispatch(setPaused(true));
-        } else {
-            dispatch(setSongId(videoId)); // Set the new song
-            dispatch(setPlayingIndex(index)); // Update currently playing index
-            dispatch(setPaused(false));
-        }
+        const isPlaying = currentPlayingIndex === index && songId === videoId;
+        dispatch(setSongId(isPlaying ? null : videoId));
+        dispatch(setPlayingIndex(isPlaying ? null : index));
+        dispatch(setPaused(isPlaying));
     };
+    
     return (
         <List sx={{ width: '100%', bgcolor: 'inherit', marginBottom: '5rem' }}>
             {items.map((item, index) => (

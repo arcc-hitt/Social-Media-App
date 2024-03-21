@@ -5,12 +5,7 @@ import {
     Typography,
     Slider,
     IconButton,
-    Stack,
     useTheme,
-    Card,
-    CardMedia,
-    CardContent,
-    Grid,
     ListItemText,
     ListItemAvatar,
     ListItem,
@@ -127,75 +122,42 @@ const TinyText = styled(Typography)({
 const MusicPlayer = () => {
     const dispatch = useDispatch();
     const theme = useTheme();
-    const [position, setPosition] = useState(0);
-    const paused = useSelector((state) => state.paused);
     const mainIconColor = theme.palette.neutral.dark;
     const lightIconColor = theme.palette.neutral.main;
 
+    const [position, setPosition] = useState(0);
+    const paused = useSelector((state) => state.paused);
     const songId = useSelector((state) => state.songId);
+    const currentPlayingIndex = useSelector((state) => state.playingIndex);
     console.log(songId);
     const [musicInfo, setMusicInfo] = useState({});
     const [expanded, setExpanded] = useState(false);
     const [nextMusicInfo, setNextMusicInfo] = useState([]);
-    const currentPlayingIndex = useSelector((state) => state.playingIndex);
     const [lyrics, setLyrics] = useState({});
 
+    useEffect(() => {
+        const fetchData = async (url, setter) => {
+            try {
+                const response = await axios.get(url);
+                setter(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        if (songId) {
+            fetchData(`http://localhost:3001/music/getMusicInfo/${songId}`, setMusicInfo);
+            fetchData(`http://localhost:3001/music/getNextMusicInfo/${songId}`, setNextMusicInfo);
+            fetchData(`http://localhost:3001/music/getMusicLyrics/${songId}`, setLyrics);
+        }
+    }, [songId]);
+
     const handlePlayPause = (index, videoId) => {
-        if (currentPlayingIndex === index) {
-            dispatch(setSongId(null));
-            dispatch(setPlayingIndex(null)); // Pause if it's already playing
-            dispatch(setPaused(true));
-        } else {
-            dispatch(setSongId(videoId)); // Set the new song
-            dispatch(setPlayingIndex(index)); // Update currently playing index
-            dispatch(setPaused(false));
-        }
+        const isPlaying = currentPlayingIndex === index && songId === videoId;
+        dispatch(setSongId(isPlaying ? null : videoId));
+        dispatch(setPlayingIndex(isPlaying ? null : index));
+        dispatch(setPaused(isPlaying));
     };
-
-    useEffect(() => {
-        const fetchMusicInfo = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3001/music/getMusicInfo/${songId}`);
-                setMusicInfo(response.data);
-                console.log(musicInfo);
-            } catch (error) {
-                console.error("Error fetching artist information:", error);
-            }
-        };
-        if (songId) {
-            fetchMusicInfo();
-        }
-    }, [songId]);
-
-    useEffect(() => {
-        const fetchMusicInfo = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3001/music/getNextMusicInfo/${songId}`);
-                setNextMusicInfo(response.data);
-                console.log(nextMusicInfo);
-            } catch (error) {
-                console.error("Error fetching artist information:", error);
-            }
-        };
-        if (songId) {
-            fetchMusicInfo();
-        }
-    }, [songId]);
-
-    useEffect(() => {
-        const fetchMusicInfo = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3001/music/getMusicLyrics/${songId}`);
-                setLyrics(response.data);
-                console.log(lyrics);
-            } catch (error) {
-                console.error("Error fetching artist information:", error);
-            }
-        };
-        if (songId) {
-            fetchMusicInfo();
-        }
-    }, [songId]);
 
     const duration = musicInfo.basic_info?.duration || 200;
     function formatDuration(value) {
@@ -203,6 +165,23 @@ const MusicPlayer = () => {
         const secondLeft = value - minute * 60;
         return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
     }
+
+    const musicDetails = [
+        {
+            label: 'Artist',
+            value: musicInfo.basic_info?.author || 'Artist',
+            variant: 'subtitle',
+            fontWeight: 500,
+            color: theme.palette.neutral.main,
+        },
+        {
+            label: 'Song',
+            value: musicInfo.basic_info?.title || 'Song',
+            variant: 'h5',
+            fontWeight: 500,
+            color: theme.palette.neutral.dark,
+        },
+    ];
 
     return (
         <Box sx={{ width: '100%', height: 'auto', overflow: 'hidden', position: 'relative', flex: 1 }}>
@@ -238,49 +217,24 @@ const MusicPlayer = () => {
                             alignItems='flex-start'
                             overflow='hidden'
                         >
+                        {musicDetails.map((detail, index) => (
                             <Typography
+                                key={index}
                                 gutterBottom
                                 noWrap
                                 ellipsis
                                 overflow='hidden'
-                                variant="h4"
-                                color={theme.palette.neutral.main}
-                                fontWeight={500}
+                                variant={index === 0 ? 'h4' : 'h2'} // Change variant dynamically
+                                color={detail.color}
+                                fontWeight={detail.fontWeight || 400}
                             >
-                                {musicInfo.basic_info?.author || 'Artist'}
+                                {detail.value}
                             </Typography>
-                            <Typography
-                                noWrap
-                                ellipsis
-                                overflow='hidden'
-                                variant='h2'
-                                color={theme.palette.neutral.dark}
-                                fontWeight={500}
-                            >
-                                {musicInfo.basic_info?.title || 'Song'}
-                            </Typography>
-                            <Typography
-                                gutterBottom
-                                noWrap
-                                ellipsis
-                                overflow='hidden'
-                                variant='h5'
-                                color={theme.palette.neutral.dark}
-                            >
-                                {musicInfo.basic_info?.tags[musicInfo.basic_info.tags.length - 2] || 'Type'}
-                            </Typography>
-                            <Typography
-                                gutterBottom
-                                ellipsis
-                                variant='body'
-                                color={theme.palette.neutral.mediumMain}
-                            >
-                                {musicInfo.basic_info?.description || 'Description'}
-                            </Typography>
+                        ))}
                         </Box>
                     </Box>
 
-                    
+
                     {/* Up next */}
                     <Box
                         gridColumn="span 6"
@@ -342,25 +296,26 @@ const MusicPlayer = () => {
                             ))}
                         </List>
                     </Box>
-                    
+
                     {/* Lyrics */}
                     <Box
                         gridColumn='span 6'
                         gridRow="span 6"
                         overflow="hidden"
                     >
-                            <Typography
-                                // noWrap
-                                ellipsis
-                                overflow='hidden'
-                                variant='body'
-                                color={theme.palette.neutral.mediumMain}
-                            >
-                                {lyrics.description?.text || 'Lyrics Not Available'}
-                            </Typography>
+                        <Typography
+                            // noWrap
+                            ellipsis
+                            overflow='hidden'
+                            variant='body'
+                            color={theme.palette.neutral.mediumMain}
+                        >
+                            {lyrics.description?.text || 'Lyrics Not Available'}
+                        </Typography>
                     </Box>
                 </ExpandedWidget>
             )}
+
             {/* Shrunken Widget */}
             <Widget>
                 {/* Song Details */}
@@ -375,35 +330,18 @@ const MusicPlayer = () => {
                         />
                     </CoverImage>
                     <Box ml='0.5rem' overflow='hidden' >
-                        <Typography
-                            noWrap
-                            ellipsis
-                            overflow='hidden'
-                            variant="subtitle"
-                            color={theme.palette.neutral.main}
-                            fontWeight={500}
-                        >
-                            {musicInfo.basic_info?.author || 'Artist'}
-                        </Typography>
-                        <Typography
-                            noWrap
-                            ellipsis
-                            overflow='hidden'
-                            variant='h5'
-                            color={theme.palette.neutral.dark}
-                            fontWeight={500}
-                        >
-                            {musicInfo.basic_info?.title || 'Song'}
-                        </Typography>
-                        <Typography
-                            noWrap
-                            ellipsis
-                            overflow='hidden'
-                            variant='h6'
-                            color={theme.palette.neutral.dark}
-                        >
-                            {musicInfo.basic_info?.tags[musicInfo.basic_info.tags.length - 2] || 'Type'}
-                        </Typography>
+                        {musicDetails.map((detail, index) => (
+                            <Typography
+                                key={index}
+                                noWrap
+                                overflow='hidden'
+                                variant={detail.variant}
+                                color={detail.color}
+                                fontWeight={detail.fontWeight || 400}
+                            >
+                                {detail.value}
+                            </Typography>
+                        ))}
                     </Box>
                 </SongDetailsContainer>
 
