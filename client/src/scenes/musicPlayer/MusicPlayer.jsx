@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import {
     Box,
@@ -23,10 +23,13 @@ import {
     ExpandLessRounded,
     PauseCircleOutline,
     PlayCircleOutline,
+    ExpandMoreRounded,
 } from '@mui/icons-material';
 import { setPaused, setSongId, setPlayingIndex } from 'state';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
+import { keyframes } from '@emotion/react';
+import qs from 'qs';
 
 const Widget = styled('Box')({
     padding: '0.5rem',
@@ -46,16 +49,38 @@ const Widget = styled('Box')({
     '-webkit-backdrop-filter': `blur( 4px )`,
 });
 
-const ExpandedWidget = styled('Box')({
-    padding: '1rem',
-    paddingBottom: '11.65%',
+const slideIn = keyframes`
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+`;
+
+const slideOut = keyframes`
+    from {
+        height: 100vh;
+        transform: translateY(0);
+    }
+    to {
+        height: 0;
+        transform: translateY(100%);
+    }
+`;
+
+const ExpandedWidget = styled('Box')(({ expanded }) => ({
     width: '100%',
-    height: '100vh',
+    // height: '100vh',
+    height: expanded ? '100vh' : 0,
+    overflow: expanded ? 'normal' : 'hidden',
+    padding: expanded ? '1rem' : 0,
+    paddingBottom: expanded ? '11.65%' : 0,
     position: 'fixed',
     bottom: 0,
     left: 'auto',
     right: 0,
-    top: 62,
+    top: expanded ? 62 : null,
     display: 'grid',
     gridTemplateColumns: 'repeat(12, 1fr)',
     gridTemplateRows: 'repeat(12, 1fr)',
@@ -68,7 +93,8 @@ const ExpandedWidget = styled('Box')({
     backgroundColor: `rgba(255, 255, 255, 0.15)`,
     backdropFilter: `blur( 4px )`,
     '-webkit-backdrop-filter': `blur( 4px )`,
-});
+    animation: expanded ? `${slideIn} 0.3s ease-in-out` : `${slideOut} 0.3s ease-in-out`,
+}));
 
 const CoverImage = styled('Box')({
     width: '5vw',
@@ -88,7 +114,7 @@ const SongDetailsContainer = styled('Box')({
     display: 'flex',
     alignItems: 'center',
     width: '100%',
-    flexBasis: '15%',
+    flexBasis: '10%',
     overflow: 'hidden',
 });
 
@@ -102,7 +128,7 @@ const NavigationContainer = styled('Box')({
 const SongProgressContainer = styled('Box')({
     display: 'flex',
     flexDirection: 'column',
-    flexBasis: '50%',
+    flexBasis: '55%',
 });
 
 const VolumeContainer = styled('Box')({
@@ -151,12 +177,12 @@ const MusicPlayer = () => {
             fetchData(`http://localhost:3001/music/getMusicLyrics/${songId}`, setLyrics);
         }
     }, [songId]);
-
+    
     const handlePlayPause = (index, videoId) => {
-        const isPlaying = currentPlayingIndex === index && songId === videoId;
+        const isPlaying = currentPlayingIndex === index && songId === videoId && !paused;
         dispatch(setSongId(isPlaying ? null : videoId));
         dispatch(setPlayingIndex(isPlaying ? null : index));
-        dispatch(setPaused(isPlaying));
+        dispatch(setPaused(isPlaying ? true : false));
     };
 
     const duration = musicInfo.basic_info?.duration || 200;
@@ -185,7 +211,7 @@ const MusicPlayer = () => {
 
     return (
         <Box sx={{ width: '100%', height: 'auto', overflow: 'hidden', position: 'relative', flex: 1 }}>
-            {expanded && (
+            {/* {expanded && ( */}
                 <ExpandedWidget expanded={expanded}>
                     {/* About */}
                     <Box
@@ -217,20 +243,20 @@ const MusicPlayer = () => {
                             alignItems='flex-start'
                             overflow='hidden'
                         >
-                        {musicDetails.map((detail, index) => (
-                            <Typography
-                                key={index}
-                                gutterBottom
-                                noWrap
-                                ellipsis
-                                overflow='hidden'
-                                variant={index === 0 ? 'h4' : 'h2'} // Change variant dynamically
-                                color={detail.color}
-                                fontWeight={detail.fontWeight || 400}
-                            >
-                                {detail.value}
-                            </Typography>
-                        ))}
+                            {musicDetails.map((detail, index) => (
+                                <Typography
+                                    key={index}
+                                    gutterBottom
+                                    noWrap
+                                    ellipsis
+                                    overflow='hidden'
+                                    variant={index === 0 ? 'h4' : 'h2'} // Change variant dynamically
+                                    color={detail.color}
+                                    fontWeight={detail.fontWeight || 400}
+                                >
+                                    {detail.value}
+                                </Typography>
+                            ))}
                         </Box>
                     </Box>
 
@@ -264,7 +290,7 @@ const MusicPlayer = () => {
                                                 aria-label="play/pause"
                                                 onClick={() => handlePlayPause(index, item.videoId)}
                                             >
-                                                {currentPlayingIndex === index && songId === item.videoId ? (
+                                                {currentPlayingIndex === index && songId === item.videoId && !paused ? (
                                                     <PauseCircleOutline />
                                                 ) : (
                                                     <PlayCircleOutline />
@@ -314,7 +340,7 @@ const MusicPlayer = () => {
                         </Typography>
                     </Box>
                 </ExpandedWidget>
-            )}
+            {/* )} */}
 
             {/* Shrunken Widget */}
             <Widget>
@@ -353,8 +379,9 @@ const MusicPlayer = () => {
                     <IconButton
                         aria-label={paused ? 'play' : 'pause'}
                         onClick={() =>
-                            dispatch(setPaused(!paused)
-                            )}
+                            dispatch(setPaused(!paused),
+                            // audioElement.paused ? audioElement.play() : audioElement.pause()
+                        )}
                     >
                         {paused ? (
                             <PlayArrowRounded
@@ -448,7 +475,11 @@ const MusicPlayer = () => {
                     aria-label="expand-less"
                     onClick={() => setExpanded(!expanded)} // Toggle expanded state
                 >
-                    <ExpandLessRounded fontSize="large" htmlColor={mainIconColor} />
+                    {expanded ? (
+                        <ExpandMoreRounded fontSize="large" htmlColor={mainIconColor} />
+                    ) : (
+                        <ExpandLessRounded fontSize="large" htmlColor={mainIconColor} />
+                    )}
                 </IconButton>
             </Widget>
         </Box>

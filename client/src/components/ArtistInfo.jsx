@@ -15,15 +15,15 @@ const ArtistInfo = ({ items }) => {
     const dispatch = useDispatch();
     const currentPlayingIndex = useSelector((state) => state.playingIndex);
     const songId = useSelector((state) => state.songId);
-    // const paused = useSelector((state) => state.paused);
+    const paused = useSelector((state) => state.paused);
 
     const handlePlayPause = (index, videoId) => {
-        const isPlaying = currentPlayingIndex === index && songId === videoId;
+        const isPlaying = currentPlayingIndex === index && songId === videoId && !paused ;
         dispatch(setSongId(isPlaying ? null : videoId));
         dispatch(setPlayingIndex(isPlaying ? null : index));
-        dispatch(setPaused(isPlaying));
+        dispatch(setPaused(isPlaying ? true : false));
     };
-    
+
     return (
         <List sx={{ width: '100%', bgcolor: 'inherit', marginBottom: '5rem' }}>
             {items.map((item, index) => (
@@ -33,10 +33,10 @@ const ArtistInfo = ({ items }) => {
                         secondaryAction={
                             <IconButton
                                 edge="end"
-                                aria-label="play/pause"
+                                aria-label={paused ? 'play' : 'pause'}
                                 onClick={() => handlePlayPause(index, item.videoId)}
                             >
-                                {currentPlayingIndex === index && songId === item.videoId ? (
+                                {currentPlayingIndex === index && songId === item.videoId && !paused ? (
                                     <PauseCircleOutline />
                                 ) : (
                                     <PlayCircleOutline />
