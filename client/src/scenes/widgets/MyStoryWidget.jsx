@@ -455,7 +455,8 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
                       flexDirection: 'row',
                       width: '100%',
                       marginTop: '1rem'
-                    }}>
+                    }}
+                  >
                     <InputBase
                       placeholder="What's on your mind..."
                       onChange={(e) => setStory(e.target.value)}

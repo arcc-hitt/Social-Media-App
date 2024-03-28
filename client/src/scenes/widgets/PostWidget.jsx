@@ -5,7 +5,7 @@ import {
   FavoriteOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, TextField, Button, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, Typography, TextField, Button, useTheme, InputBase } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
@@ -102,7 +102,7 @@ const PostWidget = ({
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}
       </Typography>
-      
+
       <Box
         sx={{
           display: "flex",
@@ -113,33 +113,33 @@ const PostWidget = ({
           marginTop: "0.75rem",
         }}
       >
-      {picturePath && (
-        <img
-        style={{
-          width: 'auto',
-          height: 'auto',
-          maxWidth: '100%',
-          maxHeight: '100%',
-          borderRadius: "0.75rem",
-        }}
-        alt="post"
-        src={`http://localhost:3001/assets/${picturePath}`}
-        onLoad={(e) => {
-          const { naturalWidth, naturalHeight } = e.target;
-          const isLandscape = naturalWidth > naturalHeight;
+        {picturePath && (
+          <img
+            style={{
+              width: 'auto',
+              height: 'auto',
+              maxWidth: '100%',
+              maxHeight: '100%',
+              borderRadius: "0.75rem",
+            }}
+            alt="post"
+            src={`http://localhost:3001/assets/${picturePath}`}
+            onLoad={(e) => {
+              const { naturalWidth, naturalHeight } = e.target;
+              const isLandscape = naturalWidth > naturalHeight;
 
-          if (isLandscape) {
-            e.target.style.width = '100%';
-            e.target.style.height = 'auto';
-          } else {
-            e.target.style.width = '62%';
-            e.target.style.height = 'auto';
-          }
-        }}
-      />
-      )}
+              if (isLandscape) {
+                e.target.style.width = '100%';
+                e.target.style.height = 'auto';
+              } else {
+                e.target.style.width = '62%';
+                e.target.style.height = 'auto';
+              }
+            }}
+          />
+        )}
       </Box>
-            
+
       <Typography
         color={medium}
         fontSize="0.75rem"
@@ -164,15 +164,15 @@ const PostWidget = ({
             </IconButton>
             <Typography>{likeCount}</Typography>
           </FlexBetween>
-          
+
           {/* comment button and count */}
           <FlexBetween gap="0.3rem">
             <IconButton onClick={() => setIsComments(!isComments)}>
-            {isComments ? (
+              {isComments ? (
                 <ChatBubbleOutlined sx={{ color: primary }} />
               ) : (
                 <ChatBubbleOutlineOutlined />
-              )}              
+              )}
             </IconButton>
             <Typography>{comments.length}</Typography>
           </FlexBetween>
@@ -205,36 +205,33 @@ const PostWidget = ({
             <Divider />
           </Box>
           <FlexBetween mt="0.5rem" gap="1rem">
-              <TextField
-                label="Add a Comment"
-                variant="standard"
-                fullWidth
-                // onBlur={handleBlur}
-                onChange={(e) => setNewComment(e.target.value)}
-                value={newComment}
-                name="addcomment"
-                // error={
-                //   Boolean(touched.firstName) && Boolean(errors.firstName)
-                // }
-                // helperText={touched.firstName && errors.firstName}
-                // sx={{
-                //   gridColumn: "span 2",
-                //   ...textFieldStyles,
-                // }}
-                // InputProps={{
-                //   style: { color: colorTokens.login.txt },
-                // }}
-              />
-
-              <Button
-                onClick={handleAddComment}
-                sx={{
-                  color: palette.background.alt,
-                  backgroundColor: palette.primary.main,
-                }}
-              >
-                POST
-              </Button>
+            <InputBase
+              placeholder="Add a Comment"
+              onChange={(e) => setNewComment(e.target.value)}
+              value={newComment}
+              sx={{
+                // backgroundColor: palette.neutral.light,
+                border: `1px solid ${palette.neutral.light}`,
+                borderRadius: "1rem",
+                padding: "0.6rem",
+                width: "100%",
+              }}
+              endAdornment={(
+                <Button
+                  onClick={handleAddComment}
+                  sx={{
+                    color: palette.neutral.dark,
+                    borderRadius: "1rem",
+                    whiteSpace: 'nowrap',
+                    '&:hover': {
+                      backgroundColor: palette.neutral.light
+                    }
+                  }}
+                >
+                  POST
+                </Button>
+              )}
+            />
           </FlexBetween>
         </Box>
       )}
