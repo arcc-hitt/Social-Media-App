@@ -82,7 +82,6 @@ const Navbar = ({ userId, picturePath }) => {
         text: "My Profile",
         onClick: () => {
           navigate(`/profile/${userId}`);
-          navigate(0);
         },
       },
       { icon: <Logout sx={{ fontSize: "1.6vw" }} />, text: "Logout", onClick: () => dispatch(setLogout()) },

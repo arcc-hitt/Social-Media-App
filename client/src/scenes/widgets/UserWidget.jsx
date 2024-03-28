@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 const UserWidget = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
+  // const user = useSelector((state) => state.user);
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
@@ -32,11 +33,13 @@ const UserWidget = ({ userId, picturePath }) => {
 
   useEffect(() => {
     getUser();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) {
     return null;
   }
+
+  console.log(userId);
 
   const {
     firstName,
@@ -48,6 +51,8 @@ const UserWidget = ({ userId, picturePath }) => {
     friends,
   } = user;
 
+  console.log(firstName);
+
   return (
     <WidgetWrapper>
       {/* FIRST ROW */}
@@ -56,7 +61,6 @@ const UserWidget = ({ userId, picturePath }) => {
         pb="1.1rem"
         onClick={() => {
           navigate(`/profile/${userId}`);
-          navigate(0);
         }}
       >
         <FlexBetween gap="1rem">

@@ -26,9 +26,11 @@ const ProfilePage = () => {
 
   useEffect(() => {
     getUser();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) return null;
+
+  console.log(userId);
 
   return (
     <Box>
@@ -44,7 +46,7 @@ const ProfilePage = () => {
         <Box flexBasis={isNonMobileScreens ? "22%" : undefined}>
           <UserWidget userId={userId} picturePath={user.picturePath} />
           <Box m="2rem 0" />
-          <FriendListWidget userId={userId} />
+          <FriendListWidget userId={_id} />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "43%" : undefined}
