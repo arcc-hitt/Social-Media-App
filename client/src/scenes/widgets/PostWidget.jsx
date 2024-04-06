@@ -22,6 +22,9 @@ const PostWidget = ({
   description,
   location,
   picturePath,
+  videoPath,
+  documentPath,
+  audioPath,
   userPicturePath,
   likes,
   comments,
@@ -138,8 +141,32 @@ const PostWidget = ({
             }}
           />
         )}
-      </Box>
+        
+        {/* Display video if videoPath exists */}
+        {videoPath && (
+          <video controls style={{ width: '100%', height: 'auto' }}>
+            <source src={`http://localhost:3001/assets/${videoPath}`} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        )}
 
+        {/* Display audio if audioPath exists */}
+        {audioPath && (
+          <audio controls style={{ width: '100%' }}>
+            <source src={`http://localhost:3001/assets/${audioPath}`} type="audio/mp3" />
+            Your browser does not support the audio tag.
+          </audio>
+        )}
+        
+        {/* Display document if documentPath exists */}
+        {documentPath && (
+          <iframe
+          src={`http://localhost:3001/assets/${documentPath}`}
+          title="Document Viewer"
+          style={{ width: '100%', height: '500px', border: 'none' }}
+        />
+        )}
+        </Box>
       <Typography
         color={medium}
         fontSize="0.75rem"

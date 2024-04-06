@@ -2,10 +2,43 @@ import Post from "../models/Post.js";
 import User from "../models/User.js";
 
 /* CREATE */
+// export const createPost = async (req, res) => {
+//   try {
+//     const { userId, description, picturePath, videoPath, documentPath, audioPath } = req.body;
+//     const user = await User.findById(userId);
+//     const newPost = new Post({
+//       userId,
+//       firstName: user.firstName,
+//       lastName: user.lastName,
+//       location: user.location,
+//       userName: user.userName,
+//       description,
+//       userPicturePath: user.picturePath,
+//       picturePath,
+//       likes: {},
+//       comments: [],
+//     });
+//     await newPost.save();
+
+//     const post = await Post.find();
+//     res.status(201).json(post);
+//   } catch (err) {
+//     res.status(409).json({ message: err.message });
+//   }
+// };
+
 export const createPost = async (req, res) => {
   try {
-    const { userId, description, picturePath } = req.body;
+    const { userId, description } = req.body;
     const user = await User.findById(userId);
+
+    // Extract file paths from req.files
+    const { picture, video, document, audio } = req.files;
+    const picturePath = picture ? picture[0].filename : null;
+    const videoPath = video ? video[0].filename : null;
+    const documentPath = document ? document[0].filename : null;
+    const audioPath = audio ? audio[0].filename : null;
+
     const newPost = new Post({
       userId,
       firstName: user.firstName,
@@ -15,17 +48,21 @@ export const createPost = async (req, res) => {
       description,
       userPicturePath: user.picturePath,
       picturePath,
+      videoPath,
+      documentPath,
+      audioPath,
       likes: {},
       comments: [],
     });
     await newPost.save();
 
-    const post = await Post.find();
-    res.status(201).json(post);
+    const posts = await Post.find();
+    res.status(201).json(posts);
   } catch (err) {
     res.status(409).json({ message: err.message });
   }
 };
+
 
 /* READ */
 export const getFeedPosts = async (req, res) => {

@@ -30,6 +30,12 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+    'frame-ancestors': ["'self'", "http://localhost:3000"] // Allow framing from frontend server
+  }
+}));
 app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
@@ -45,11 +51,18 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
+
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);
-app.post("/posts", verifyToken, upload.single("picture"), createPost);
+// app.post("/posts", verifyToken, upload.single("picture"), createPost);
+app.post("/posts", verifyToken, upload.fields([
+  { name: 'picture', maxCount: 1 },
+  { name: 'video', maxCount: 1 },
+  { name: 'document', maxCount: 1 },
+  { name: 'audio', maxCount: 1 }
+]), createPost);
 app.post("/stories", verifyToken, upload.single("picture"), createStory);
 
 /* ROUTES */
