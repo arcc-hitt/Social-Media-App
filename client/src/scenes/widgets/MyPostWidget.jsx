@@ -226,6 +226,7 @@ const MyPostWidget = ({ picturePath }) => {
   const [isDocument, setIsDocument] = useState(false);
   const [file, setFile] = useState(null);
   const [post, setPost] = useState("");
+  const [error, setError] = useState(null);
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
@@ -237,7 +238,7 @@ const MyPostWidget = ({ picturePath }) => {
     const formData = new FormData();
     formData.append("userId", _id);
     formData.append("description", post);
-    
+
     // Check if file exists before appending it to formData
     if (isImage) {
       formData.append("picture", file);
@@ -257,19 +258,19 @@ const MyPostWidget = ({ picturePath }) => {
     }
 
     console.log(formData.toString());
-  
+
     try {
       const response = await fetch(`http://localhost:3001/posts`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-  
+
       if (!response.ok) {
         const errorMessage = await response.json();
         throw new Error(errorMessage.message);
       }
-  
+
       const posts = await response.json();
       dispatch(setPosts({ posts }));
       setFile(null);
@@ -278,9 +279,6 @@ const MyPostWidget = ({ picturePath }) => {
       console.error("Error creating post:", error.message);
     }
   };
-  
-
-  console.log(file);
 
   const postOptionStyles = {
     color: medium,
@@ -296,12 +294,36 @@ const MyPostWidget = ({ picturePath }) => {
     },
   };
 
+  // const handleUpload = (acceptedFiles, type) => {
+  //   setFile(acceptedFiles[0]);
+  //   setIsImage(type === 'image');
+  //   setIsVideo(type === 'video');
+  //   setIsAudio(type === 'audio');
+  //   setIsDocument(type === 'document');
+  // };
+
   const handleUpload = (acceptedFiles, type) => {
-    setFile(acceptedFiles[0]);
-    setIsImage(type === 'image');
-    setIsVideo(type === 'video');
-    setIsAudio(type === 'audio');
-    setIsDocument(type === 'document');
+    const allowedTypes = {
+      image: [".jpg", ".jpeg", ".png"],
+      video: [".mp4", ".mov", ".avi"],
+      audio: [".mp3", ".wav"],
+      document: [".pdf", ".doc", ".docx", ".xls", ".xlsx"],
+    };
+
+    const fileType = type === 'image' ? 'image' : type === 'video' ? 'video' : type === 'audio' ? 'audio' : 'document';
+
+    const fileExtension = acceptedFiles[0].name.split('.').pop().toLowerCase();
+
+    if (allowedTypes[fileType].includes(`.${fileExtension}`)) {
+      setFile(acceptedFiles[0]);
+      setIsImage(type === 'image');
+      setIsVideo(type === 'video');
+      setIsAudio(type === 'audio');
+      setIsDocument(type === 'document');
+      setError(null);
+    } else {
+      setError("Invalid file type. Please upload a valid file.");
+    }
   };
 
   const acceptedFilesByType = {
@@ -350,7 +372,9 @@ const MyPostWidget = ({ picturePath }) => {
                 >
                   <input {...getInputProps()} />
                   {!file ? (
-                    <p>Upload File Here</p>
+                    <Typography variant="h5" >
+                      Upload {isImage ? 'Image' : isVideo ? 'Video' : isAudio ? 'Audio' : 'Document'} Here
+                    </Typography>
                   ) : (
                     <FlexBetween>
                       <Typography>{file.name}</Typography>
@@ -372,30 +396,68 @@ const MyPostWidget = ({ picturePath }) => {
         </Box>
       )}
 
+      {error && (
+        <Typography variant="subtitle" color="error" mt={1}>
+          {error}
+        </Typography>
+      )}
+
       <Divider sx={{ margin: "1.25rem 0" }} />
 
       <FlexBetween>
         <FlexBetween
           gap="0.25rem"
-          onClick={() => setIsImage(!isImage)}
-          sx={ postOptionStyles }>
+          onClick={() => {
+            setIsImage(!isImage)
+            setIsVideo(false);
+            setIsAudio(false);
+            setIsDocument(false);
+          }}
+          sx={postOptionStyles}>
           <ImageOutlined />
           <Typography> Image </Typography>
         </FlexBetween>
 
         {isNonMobileScreens ? (
           <>
-            <FlexBetween gap="0.25rem" onClick={() => setIsVideo(!isVideo)} sx={ postOptionStyles }>
+            <FlexBetween
+              gap="0.25rem"
+              onClick={() => {
+                setIsImage(false)
+                setIsVideo(!isVideo);
+                setIsAudio(false);
+                setIsDocument(false);
+              }}
+              sx={postOptionStyles}
+            >
               <VideoLibraryOutlined />
               <Typography>Clip</Typography>
             </FlexBetween>
 
-            <FlexBetween gap="0.25rem" onClick={() => setIsDocument(!isDocument)} sx={ postOptionStyles }>
+            <FlexBetween
+              gap="0.25rem"
+              onClick={() => {
+                setIsImage(false)
+                setIsVideo(false);
+                setIsAudio(false);
+                setIsDocument(!isDocument);
+              }}
+              sx={postOptionStyles}
+            >
               <DescriptionOutlined />
               <Typography>Document</Typography>
             </FlexBetween>
 
-            <FlexBetween gap="0.25rem" onClick={() => setIsAudio(!isAudio)} sx={ postOptionStyles }>
+            <FlexBetween
+              gap="0.25rem"
+              onClick={() => {
+                setIsImage(false)
+                setIsVideo(false);
+                setIsAudio(!isAudio);
+                setIsDocument(false);
+              }}
+              sx={postOptionStyles}
+            >
               <AudiotrackOutlined />
               <Typography>Audio</Typography>
             </FlexBetween>
@@ -413,7 +475,7 @@ const MyPostWidget = ({ picturePath }) => {
             color: palette.neutral.light,
             backgroundColor: palette.primary.main,
             borderRadius: "1rem",
-            '&:hover' : {
+            '&:hover': {
               color: palette.neutral.dark,
               backgroundColor: palette.primary.light,
             }
