@@ -3,8 +3,14 @@ import User from "../models/User.js";
 
 export const createStory = async (req, res) => {
   try {
-    const { userId, description, picturePath } = req.body;
+    const { userId, description } = req.body;
     const user = await User.findById(userId);
+
+    // Extract file paths from req.files
+    const { picture, video } = req.files;
+    const picturePath = picture ? picture[0].filename : null;
+    const videoPath = video ? video[0].filename : null;
+
     const newStory = new Story({
       userId,
       firstName: user.firstName,
@@ -14,13 +20,14 @@ export const createStory = async (req, res) => {
       description,
       userPicturePath: user.picturePath,
       picturePath,
+      videoPath,
       likes: {},
       comments: [],
     });
     await newStory.save();
- 
-    const story = await Story.find();
-    res.status(201).json(story);
+
+    const stories = await Story.find();
+    res.status(201).json(stories);
   } catch (err) {
     res.status(409).json({ message: err.message });
   }

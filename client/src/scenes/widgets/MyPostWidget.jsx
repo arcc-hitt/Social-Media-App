@@ -34,6 +34,7 @@ const MyPostWidget = ({ picturePath }) => {
   const [file, setFile] = useState(null);
   const [post, setPost] = useState("");
   const [error, setError] = useState(null);
+
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
@@ -82,10 +83,9 @@ const MyPostWidget = ({ picturePath }) => {
       setPost("");
     } catch (error) {
       console.error("Error creating post:", error.message);
+      setError("Something went wrong!!");
     }
   };
-
-  console.log(file);
 
   const postOptionStyles = {
     color: medium,
@@ -207,7 +207,7 @@ const MyPostWidget = ({ picturePath }) => {
         <FlexBetween
           gap="0.25rem"
           onClick={() => {
-            setIsImage(!isImage)
+            setIsImage(!isImage);
             setIsVideo(false);
             setIsAudio(false);
             setIsDocument(false);
@@ -222,7 +222,7 @@ const MyPostWidget = ({ picturePath }) => {
             <FlexBetween
               gap="0.25rem"
               onClick={() => {
-                setIsImage(false)
+                setIsImage(false);
                 setIsVideo(!isVideo);
                 setIsAudio(false);
                 setIsDocument(false);
@@ -236,7 +236,7 @@ const MyPostWidget = ({ picturePath }) => {
             <FlexBetween
               gap="0.25rem"
               onClick={() => {
-                setIsImage(false)
+                setIsImage(false);
                 setIsVideo(false);
                 setIsAudio(false);
                 setIsDocument(!isDocument);
@@ -250,7 +250,7 @@ const MyPostWidget = ({ picturePath }) => {
             <FlexBetween
               gap="0.25rem"
               onClick={() => {
-                setIsImage(false)
+                setIsImage(false);
                 setIsVideo(false);
                 setIsAudio(!isAudio);
                 setIsDocument(false);

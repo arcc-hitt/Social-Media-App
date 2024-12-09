@@ -21,6 +21,7 @@ const storySchema = mongoose.Schema(
     location: String,
     description: String,
     picturePath: String,
+    videoPath: String,
     userPicturePath: String,
     likes: {
       type: Map,

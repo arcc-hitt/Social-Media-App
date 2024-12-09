@@ -2,6 +2,8 @@ import {
   DeleteOutlined,
   Close,
   Add,
+  ImageOutlined,
+  VideoLibraryOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -15,6 +17,7 @@ import {
   useMediaQuery,
   Tooltip,
   tooltipClasses,
+  ButtonBase,
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
@@ -24,10 +27,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { setStories } from "state";
 import styled from "@emotion/styled";
 
-const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStory, onImageClick }) => {
+const MyStoryWidget = ({ userName, picturePath, videoPath, userPicturePath, currentUserStory, onImageClick }) => {
   const dispatch = useDispatch();
   const [image, setImage] = useState(null);
+  const [isImage, setIsImage] = useState(false);
+  const [isVideo, setIsVideo] = useState(false);
+  const [file, setFile] = useState(null);
   const [story, setStory] = useState("");
+  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
 
   const { palette } = useTheme();
@@ -53,9 +60,14 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
     const formData = new FormData();
     formData.append("userId", _id);
     formData.append("description", story);
-    if (image) {
-      formData.append("picture", image);
-      formData.append("picturePath", image.name);
+
+    if (isImage) {
+      formData.append("picture", file);
+      formData.append("picturePath", file.name);
+    }
+    if (isVideo) {
+      formData.append("video", file);
+      formData.append("videoPath", file.name);
     }
 
     const response = await fetch(`http://localhost:3001/stories`, {
@@ -65,9 +77,48 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
     });
     const stories = await response.json();
     dispatch(setStories({ stories }));
-    setImage(null);
+    setFile(null);
     setStory("");
   };
+
+  const handleUpload = (acceptedFiles, type) => {
+    const allowedTypes = {
+      image: [".jpg", ".jpeg", ".png"],
+      video: [".mp4", ".mov", ".avi"],
+    };
+
+    const fileType = type === 'image' ? 'image' : 'video';
+
+    const fileExtension = acceptedFiles[0].name.split('.').pop().toLowerCase();
+
+    if (allowedTypes[fileType].includes(`.${fileExtension}`)) {
+      setFile(acceptedFiles[0]);
+      setIsImage(type === 'image');
+      setIsVideo(type === 'video');
+      setError(null);
+    } else {
+      setError("Invalid file type. Please upload a valid file.");
+      console.error("Invalid file type. Please upload a valid file");
+    }
+  };
+
+  const acceptedFilesByType = {
+    image: ".jpg,.jpeg,.png",
+    video: ".mp4,.mov,.avi",
+  };
+
+  const uploadOptions = [
+    {
+      onClick: () => { setIsImage(!isImage); setIsVideo(false) },
+      icon: <ImageOutlined />,
+      text: 'Image',
+    },
+    {
+      onClick: () => { setIsVideo(!isVideo); setIsImage(false) },
+      icon: <VideoLibraryOutlined />,
+      text: 'Video',
+    },
+  ];
 
   return (
     <>
@@ -370,7 +421,7 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
                 justifyContent: 'center',
               }}
             >
-              {image ? (
+              {file ? (
                 <Box
                   sx={{
                     display: 'flex',
@@ -399,29 +450,47 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
                         justifyContent: 'center',
                       }}
                     >
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt="selectedStory"
-                        style={{
-                          width: 'auto',
-                          height: 'auto',
-                          maxWidth: '400px',
-                          maxHeight: '600px',
-                        }}
-                        onLoad={(e) => {
-                          const { naturalWidth, naturalHeight } = e.target;
-                          const isLandscape = naturalWidth > naturalHeight;
+                      {/* Check if the story is an image or a video */}
+                      {isVideo ? (
+                        // Render video
+                        <video
+                          style={{
+                            width: 'auto',
+                            height: 'auto',
+                            maxWidth: '400px',
+                            maxHeight: '600px',
+                          }}
+                          controls
+                        >
+                          <source src={URL.createObjectURL(file)} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : (
+                        // Render image
+                        <img
+                          style={{
+                            width: 'auto',
+                            height: 'auto',
+                            maxWidth: '400px',
+                            maxHeight: '600px',
+                          }}
+                          alt="story"
+                          src={URL.createObjectURL(file)}
+                          onLoad={(e) => {
+                            const { naturalWidth, naturalHeight } = e.target;
+                            const isLandscape = naturalWidth > naturalHeight;
 
-                          if (isLandscape) {
-                            e.target.style.width = '400px';
-                            e.target.style.height = 'auto';
-                          } else {
-                            e.target.style.width = 'auto';
-                            e.target.style.height = '600px';
-                            e.target.style.borderRadius = '0.75rem';
-                          }
-                        }}
-                      />
+                            if (isLandscape) {
+                              e.target.style.width = '400px';
+                              e.target.style.height = 'auto';
+                            } else {
+                              e.target.style.width = 'auto';
+                              e.target.style.height = '600px';
+                              e.target.style.borderRadius = '0.75rem';
+                            }
+                          }}
+                        />
+                      )}
                       {story && (
                         <Typography
                           variant="subtitle"
@@ -487,7 +556,7 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
                     />
                     <Tooltip title="Delete Image">
                       <IconButton
-                        onClick={() => setImage(null)}
+                        onClick={() => setFile(null)}
                         sx={{
                           flexBasis: '5%',
                         }}
@@ -498,26 +567,73 @@ const MyStoryWidget = ({ userName, picturePath, userPicturePath, currentUserStor
                   </Box>
                 </Box>
               ) : (
-                <Dropzone
-                  acceptedFiles=".jpg,.jpeg,.png"
-                  multiple={false}
-                  onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <FlexBetween>
-                      <Box
-                        {...getRootProps()}
-                        border={`2px dashed ${palette.primary.main}`}
-                        p="1rem"
-                        width="100%"
-                        sx={{ "&:hover": { cursor: "pointer" } }}
-                      >
-                        <input {...getInputProps()} />
-                        <p>Add Image Here</p>
-                      </Box>
-                    </FlexBetween>
-                  )}
-                </Dropzone>
+                (isImage || isVideo) && (
+                  <Dropzone
+                    acceptedFiles={acceptedFilesByType[isImage ? 'image' : 'video']}
+                    multiple={false}
+                    onDrop={(acceptedFiles) => handleUpload(acceptedFiles, isImage ? 'image' : 'video')}
+                  >
+                    {({ getRootProps, getInputProps }) => (
+                      <FlexBetween>
+                        <Box
+                          {...getRootProps()}
+                          border={`2px dashed ${palette.primary.main}`}
+                          p="1rem"
+                          width="100%"
+                          sx={{ "&:hover": { cursor: "pointer" } }}
+                        >
+                          <input {...getInputProps()} />
+                          <Typography variant="h5" >
+                            Upload {isImage ? 'Image' : 'Video'} Here
+                          </Typography>
+                        </Box>
+                      </FlexBetween>
+                    )}
+                  </Dropzone>
+                )
+              )}
+
+              {error && (
+                <Typography variant="subtitle" color="error" mt={1}>
+                  {error}
+                </Typography>
+              )}
+
+              {!file && (
+                <FlexBetween gap={2} mt="1rem">
+                  {uploadOptions.map((option) => (
+                    <IconButton
+                      color="primary"
+                      aria-label={option.text}
+                      onClick={option.onClick}
+                      sx={{
+                        width: '5vw',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: "0.5rem",
+                        border: `1px solid ${palette.neutral.medium}`,
+                        color: palette.neutral.medium,
+                        '&:hover': {
+                          border: `1px solid ${palette.neutral.dark}`,
+                          color: palette.neutral.dark,
+                          borderRadius: "0.5rem",
+                          backgroundColor: "transparent",
+                        },
+                        '&:active': {
+                          border: `1px solid ${palette.neutral.dark}`,
+                          color: palette.neutral.dark,
+                          borderRadius: "0.5rem",
+                          backgroundColor: "transparent",
+                        },
+                      }}
+                    >
+                      {option.icon}
+                      <span>{option.text}</span>
+                    </IconButton>
+                  ))}
+                </FlexBetween>
               )}
 
               <IconButton

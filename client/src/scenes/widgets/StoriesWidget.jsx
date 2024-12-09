@@ -1,4 +1,4 @@
-import { Stack, Box, IconButton, Slide, Grid, useMediaQuery } from '@mui/material';
+import { Stack, Box, IconButton, Slide, useMediaQuery } from '@mui/material';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,14 +33,24 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
     setModalOpen(false);
   };
 
-  const uniqueUserStories = Object.values(
-    stories.reduce((acc, story) => {
-      if (!acc[story.userId]) {
-        acc[story.userId] = story;
-      }
-      return acc;
-    }, {})
-  );
+  // const uniqueUserStories = Object.values(
+  //   stories.reduce((acc, story) => {
+  //     if (!acc[story.userId]) {
+  //       acc[story.userId] = story;
+  //     }
+  //     return acc;
+  //   }, {})
+  // );
+  const uniqueUserStories = Array.isArray(stories)
+  ? Object.values(
+      stories.reduce((acc, story) => {
+        if (!acc[story.userId]) {
+          acc[story.userId] = story;
+        }
+        return acc;
+      }, {})
+    )
+  : [];
 
   const currentUserStory = uniqueUserStories.some((story) => story.userId === userId);
 
@@ -127,7 +137,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                 left: 0,
                 top: "50%",
                 transform: "translateY(-50%)",
-                zIndex: "10000",
+                zIndex: "10",
               }}
             >
               <NavigateBefore />
@@ -145,7 +155,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                   width: "100%",
                 }}
               >
-                {/* Render MyStoryWidget components */}
+                {/* Render MyStoryWidget component */}
                 {!currentUserStory ? (
                   userId && (
                     <Slide
@@ -187,6 +197,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                           <MyStoryWidget
                             userName={story.userName}
                             picturePath={story.picturePath}
+                            videoPath={story.videoPath}
                             userPicturePath={story.userPicturePath}
                             currentUserStory={currentUserStory}
                             onImageClick={() => handleModalOpen(story.userId)}
@@ -223,6 +234,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                           description={story.description}
                           location={story.location}
                           picturePath={story.picturePath}
+                          videoPath={story.videoPath}
                           userPicturePath={story.userPicturePath}
                           likes={story.likes}
                           comments={story.comments}

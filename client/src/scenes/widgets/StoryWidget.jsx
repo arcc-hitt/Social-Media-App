@@ -1,14 +1,19 @@
 import {
   FavoriteBorderOutlined,
   FavoriteOutlined,
+  Pause,
+  PlayArrow,
+  VolumeOff,
+  VolumeUp,
 } from "@mui/icons-material";
-import { Box, IconButton, Typography, useTheme, useMediaQuery, } from "@mui/material";
+import { Box, IconButton, Typography, useTheme, useMediaQuery, CardMedia, LinearProgress, linearProgressClasses } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import UserImage from "components/UserImage";
 import { useDispatch, useSelector } from "react-redux";
 import { setStory } from "state";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 
 const StoryWidget = ({
   storyId,
@@ -18,11 +23,13 @@ const StoryWidget = ({
   description,
   location,
   picturePath,
+  videoPath,
   userPicturePath,
   likes,
   comments,
   createdAt,
   modalOpen,
+  userStoryCount,
 }) => {
   // const [isComments, setIsComments] = useState(false);
   // const [newComment, setNewComment] = useState("");
@@ -33,13 +40,14 @@ const StoryWidget = ({
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   // const likeCount = Object.keys(likes).length;
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const { palette } = useTheme();
   const primary = palette.primary.main;
 
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-  
-  const theme = useTheme(); 
+
+  const theme = useTheme();
   const isSmallLaptop = useMediaQuery(theme.breakpoints.only('md'));
 
   const patchLike = async () => {
@@ -91,13 +99,75 @@ const StoryWidget = ({
     formattedTime = `${secondsAgo} ${secondsAgo === 1 ? 'second' : 'seconds'} ago`;
   }
 
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const videoRef = useRef(null);
+  const [progress, setProgress] = useState(0);
+  const [showProgress, setShowProgress] = useState(false); 
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    // Start the progress timer when the component mounts
+    if (videoPath) {
+      const video = document.createElement('video');
+      video.src = `http://localhost:3001/assets/${videoPath}`;
+      video.addEventListener('loadedmetadata', () => {
+        const duration = Math.floor(video.duration);
+        let currentTime = 0;
+        timerRef.current = setInterval(() => {
+          currentTime += 1;
+          if (currentTime > duration) {
+            clearInterval(timerRef.current);
+          } else {
+            setProgress((currentTime / duration) * 100);
+          }
+        }, 300);
+      });
+      return () => {
+        video.removeEventListener('loadedmetadata', () => {});
+      };
+    } else {
+      timerRef.current = setInterval(() => {
+        setProgress((prevProgress) => {
+          if (prevProgress >= 100) {
+            clearInterval(timerRef.current);
+            return 0;
+          }
+          return prevProgress + 5;
+        });
+      }, 300); // Update progress every second
+      return () => {
+        clearInterval(timerRef.current);
+      };
+    }
+  }, [videoPath]);
+
+  // useEffect(() => {
+  //   // Set showProgress to true only for the first story
+  //   setShowProgress(storyId === sortedStories[0]?._id);
+  // }, [sortedStories, storyId]);
+
+  const handlePlayPause = () => {
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleMuteUnmute = () => {
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
+
   return (
     <div>
       {isNonMobileScreens ? (
         // Desktop Devices
         <Box>
           {modalOpen ? (
-            // Display the posted story images
+            // Display the posted story images and clips
             <Box>
               <FlexBetween
                 sx={{
@@ -116,54 +186,81 @@ const StoryWidget = ({
                     justifyContent: 'center',
                   }}
                 >
-                  {/* Story Image */}
-                  <img
-                    style={{
-                      width: 'auto',
-                      height: 'auto',
-                      maxWidth: '400px',
-                      maxHeight: '600px',
-                    }}
-                    alt="story"
-                    src={`http://localhost:3001/assets/${picturePath}`}
-                    onLoad={(e) => {
-                      const { naturalWidth, naturalHeight } = e.target;
-                      const isLandscape = naturalWidth > naturalHeight;
+                  {/* Check if the story is an image or a video */}
+                  {videoPath ? (
+                    // Render video
+                    <div style={{ position: "relative" }}>
+                      <video
+                        style={{
+                          width: videoLoaded ? 'auto' : '0',
+                          height: videoLoaded ? 'auto' : '0',
+                          maxWidth: '400px',
+                          maxHeight: '600px',
+                          display: videoLoaded ? 'block' : 'none',
+                        }}
+                        disablePictureInPicture
+                        autoPlay
+                        ref={videoRef}
+                        onLoadedData={() => setVideoLoaded(true)}
+                      >
+                        <source src={`http://localhost:3001/assets/${videoPath}`} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  ) : (
+                    // Render image
+                    <img
+                      style={{
+                        width: 'auto',
+                        height: 'auto',
+                        maxWidth: '400px',
+                        maxHeight: '600px',
+                      }}
+                      alt="story"
+                      src={`http://localhost:3001/assets/${picturePath}`}
+                      onLoad={(e) => {
+                        const { naturalWidth, naturalHeight } = e.target;
+                        const isLandscape = naturalWidth > naturalHeight;
 
-                      if (isLandscape) {
-                        e.target.style.width = '400px';
-                        e.target.style.height = 'auto';
-                      } else {
-                        e.target.style.width = 'auto';
-                        e.target.style.height = '600px';
-                        e.target.style.borderRadius = '0.75rem';
-                      }
-                    }}
-                  />
-
+                        if (isLandscape) {
+                          e.target.style.width = '400px';
+                          e.target.style.height = 'auto';
+                        } else {
+                          e.target.style.width = 'auto';
+                          e.target.style.height = '600px';
+                          e.target.style.borderRadius = '0.75rem';
+                        }
+                      }}
+                    />
+                  )}
                   {/* Username and Image */}
                   <Box
-                    onClick={() => {
-                      navigate(`/profile/${storyUserId}`);
-                      navigate(0);
-                    }}
                     sx={{
                       position: "absolute",
                       top: 0,
                       left: 0,
-                      margin: "0.5rem",
+                      right: 0,
+                      padding: "0.5rem",
                       cursor: "pointer",
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                       gap: "0.5rem",
+                      width: "100%",
+                      background: "rgba(0, 0, 0, 0.1)",
                     }}
                   >
-                    <UserImage
-                      image={userPicturePath}
-                      size="45px"
-                    />
+                    <Box onClick={() => navigate(`/profile/${storyUserId}`)}>
+                      <UserImage
+                        image={userPicturePath}
+                        size="45px"
+                      />
+                    </Box>
+
                     <Typography
+                      onClick={() => {
+                        navigate(`/profile/${storyUserId}`);
+                      }}
                       color={palette.neutral.dark}
                       variant="h5"
                       fontWeight="500"
@@ -175,6 +272,74 @@ const StoryWidget = ({
                     >
                       {userName}
                     </Typography>
+
+                    {videoPath && (
+                      <Box
+                        sx={{
+                          flex: 1,
+                          width: "100%",
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                        }}
+                      >
+                        <IconButton
+                          style={{ color: "white" }}
+                          onClick={handlePlayPause}
+                        >
+                          {isPlaying ? (
+                            <Pause />
+                          ) : (
+                            <PlayArrow />
+                          )}
+                        </IconButton>
+                        <IconButton
+                          style={{ color: "white" }}
+                          onClick={handleMuteUnmute}
+                        >
+                          {isMuted ? (
+                            <VolumeOff />
+                          ) : (
+                            <VolumeUp />
+                          )}
+                        </IconButton>
+                      </Box>
+                    )}
+                  </Box>
+
+                  <Box
+                  sx={{
+                    width: '100%',
+                    height: '4px',
+                    maxHeight: '4px',
+                    position: 'absolute',
+                    top: 58,
+                    overflow: 'hidden',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                  >
+                    {/* Display linear progress bars for each story */}
+                    {Array.from(Array(userStoryCount).keys()).map((index) => (
+                      <LinearProgress
+                        key={index}
+                        variant="determinate"
+                        value={progress}
+                        sx={{
+                          // Calculate width dynamically based on count
+                          width: `${100 / userStoryCount}%`,
+                          height: '4px',
+                          marginRight: index < userStoryCount - 1 ? '2px' : '0',
+                          [`&.${linearProgressClasses.colorPrimary}`]: {
+                            backgroundColor: "#cacaca",
+                          },
+                          [`& .${linearProgressClasses.bar}`]: {
+                            borderRadius: 5,
+                            backgroundColor: '#fbfbfb',
+                          },
+                        }}
+                      />
+                    ))}
                   </Box>
 
                   {/* Display Caption for the story */}
@@ -244,7 +409,7 @@ const StoryWidget = ({
                 {picturePath && (
                   <img
                     alt="story"
-                    style={{            
+                    style={{
                       aspectRatio: '6/9',
                       height: isSmallLaptop ? "130px" : "150px",
                       borderRadius: "0.75rem",

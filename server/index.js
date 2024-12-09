@@ -63,7 +63,10 @@ app.post("/posts", verifyToken, upload.fields([
   { name: 'document', maxCount: 1 },
   { name: 'audio', maxCount: 1 }
 ]), createPost);
-app.post("/stories", verifyToken, upload.single("picture"), createStory);
+app.post("/stories", verifyToken, upload.fields([
+  { name: 'picture', maxCount: 1 },
+  { name: 'video', maxCount: 1 },
+]), createStory);
 
 /* ROUTES */
 app.use("/auth", authRoutes);

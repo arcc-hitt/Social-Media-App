@@ -21,11 +21,24 @@ const StoryModal = ({
 
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
-  const initialUserIndex = stories.findIndex((story) => story.userId === initialUserId);
-  const reorderedStories = [
-    ...stories.slice(initialUserIndex),
-    ...stories.slice(0, initialUserIndex),
-  ];
+  // Group stories by userId
+  const groupedStories = stories.reduce((acc, story) => {
+    if (!acc[story.userId]) {
+      acc[story.userId] = [];
+    }
+    acc[story.userId].push(story);
+    return acc;
+  }, {});
+
+  // Sort stories by userId and move stories of initialUserId to the front
+  const sortedStories = [];
+  Object.keys(groupedStories).forEach((userId) => {
+    if (userId === initialUserId) {
+      sortedStories.unshift(...groupedStories[userId]);
+    } else {
+      sortedStories.push(...groupedStories[userId]);
+    }
+  });
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
@@ -91,7 +104,7 @@ const StoryModal = ({
               }}
               ref={containerRef}
             >
-              {reorderedStories
+              {sortedStories
                 .slice(currentPage * storiesPerPage, (currentPage + 1) * storiesPerPage)
                 .map((story) => (
                   <Slide
@@ -113,11 +126,13 @@ const StoryModal = ({
                         description={story.description}
                         location={story.location}
                         picturePath={story.picturePath}
+                        videoPath={story.videoPath}
                         userPicturePath={story.userPicturePath}
                         likes={story.likes}
                         comments={story.comments}
                         createdAt={story.createdAt}
                         modalOpen={open}
+                        userStoryCount={groupedStories[story.userId].length}
                       />
                     </Stack>
                   </Slide>
@@ -195,7 +210,7 @@ const StoryModal = ({
               }}
               ref={containerRef}
             >
-              {reorderedStories
+              {sortedStories
                 .slice(currentPage * storiesPerPage, (currentPage + 1) * storiesPerPage)
                 .map((story) => (
                   <Slide
@@ -217,11 +232,13 @@ const StoryModal = ({
                         description={story.description}
                         location={story.location}
                         picturePath={story.picturePath}
+                        videoPath={story.videoPath}
                         userPicturePath={story.userPicturePath}
                         likes={story.likes}
                         comments={story.comments}
                         createdAt={story.createdAt}
                         modalOpen={open}
+                        userStoryCount={groupedStories[story.userId].length}
                       />
                     </Stack>
                   </Slide>
