@@ -39,8 +39,6 @@ const UserWidget = ({ userId, picturePath }) => {
     return null;
   }
 
-  console.log(userId);
-
   const {
     firstName,
     lastName,
@@ -50,8 +48,6 @@ const UserWidget = ({ userId, picturePath }) => {
     impressions,
     friends,
   } = user;
-
-  console.log(firstName);
 
   return (
     <WidgetWrapper>
