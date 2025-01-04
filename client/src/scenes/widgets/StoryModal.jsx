@@ -6,6 +6,7 @@ import {
 import { Box, IconButton, Modal, Slide, Stack, useMediaQuery, useTheme, } from "@mui/material";
 import { useRef, useState } from "react";
 import StoryWidget from "./StoryWidget";
+import StoryProgressBar from "./StoryProgressBar";
 
 const StoryModal = ({
   stories,
@@ -16,6 +17,7 @@ const StoryModal = ({
   const [currentPage, setCurrentPage] = useState(0);
   const [slideDirection, setSlideDirection] = useState("left");
   const [isHovered, setIsHovered] = useState(false);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const containerRef = useRef(null);
   const { palette } = useTheme();
 
@@ -40,6 +42,8 @@ const StoryModal = ({
     }
   });
 
+  const userStories = groupedStories[initialUserId] || [];
+
   const handleNextPage = () => {
     setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
     setSlideDirection("left");
@@ -51,6 +55,16 @@ const StoryModal = ({
   const handlePrevPage = () => {
     setCurrentPage((prevPage) => (prevPage - 1 + totalPages) % totalPages);
     setSlideDirection("right");
+  };
+
+  const handleStoryEnd = () => {
+    if (currentStoryIndex < userStories.length - 1) {
+      setCurrentStoryIndex(currentStoryIndex + 1);
+      handleNextPage();
+    } else {
+      handleNextPage();
+      setCurrentStoryIndex(0);
+    }
   };
 
   return (
@@ -106,7 +120,7 @@ const StoryModal = ({
             >
               {sortedStories
                 .slice(currentPage * storiesPerPage, (currentPage + 1) * storiesPerPage)
-                .map((story) => (
+                .map((story, index) => (
                   <Slide
                     key={story._id}
                     direction={slideDirection}
@@ -132,7 +146,9 @@ const StoryModal = ({
                         comments={story.comments}
                         createdAt={story.createdAt}
                         modalOpen={open}
-                        userStoryCount={groupedStories[story.userId].length}
+                        currentStoryIndex={currentStoryIndex}
+                        onStoryEnd={handleStoryEnd}
+                        userStories={userStories}
                       />
                     </Stack>
                   </Slide>
@@ -238,12 +254,18 @@ const StoryModal = ({
                         comments={story.comments}
                         createdAt={story.createdAt}
                         modalOpen={open}
-                        userStoryCount={groupedStories[story.userId].length}
+                        currentStoryIndex={currentStoryIndex}
+                        onStoryEnd={handleStoryEnd}
                       />
                     </Stack>
                   </Slide>
                 ))}
             </Box>
+            <StoryProgressBar
+              userStories={userStories}
+              currentStoryIndex={currentStoryIndex}
+              onStoryEnd={handleStoryEnd}
+            />
             <IconButton
               onClick={handleNextPage}
               sx={{

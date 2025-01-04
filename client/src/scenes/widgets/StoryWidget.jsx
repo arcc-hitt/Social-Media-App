@@ -6,7 +6,7 @@ import {
   VolumeOff,
   VolumeUp,
 } from "@mui/icons-material";
-import { Box, IconButton, Typography, useTheme, useMediaQuery, CardMedia, LinearProgress, linearProgressClasses } from "@mui/material";
+import { Box, IconButton, Typography, useTheme, useMediaQuery } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import UserImage from "components/UserImage";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +14,7 @@ import { setStory } from "state";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import StoryProgressBar from "./StoryProgressBar";
 
 const StoryWidget = ({
   storyId,
@@ -29,7 +30,9 @@ const StoryWidget = ({
   comments,
   createdAt,
   modalOpen,
-  userStoryCount,
+  userStories,
+  currentStoryIndex,
+  onStoryEnd,
 }) => {
   // const [isComments, setIsComments] = useState(false);
   // const [newComment, setNewComment] = useState("");
@@ -102,50 +105,6 @@ const StoryWidget = ({
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const videoRef = useRef(null);
-  const [progress, setProgress] = useState(0);
-  const [showProgress, setShowProgress] = useState(false); 
-  const timerRef = useRef(null);
-
-  useEffect(() => {
-    // Start the progress timer when the component mounts
-    if (videoPath) {
-      const video = document.createElement('video');
-      video.src = `http://localhost:3001/assets/${videoPath}`;
-      video.addEventListener('loadedmetadata', () => {
-        const duration = Math.floor(video.duration);
-        let currentTime = 0;
-        timerRef.current = setInterval(() => {
-          currentTime += 1;
-          if (currentTime > duration) {
-            clearInterval(timerRef.current);
-          } else {
-            setProgress((currentTime / duration) * 100);
-          }
-        }, 300);
-      });
-      return () => {
-        video.removeEventListener('loadedmetadata', () => {});
-      };
-    } else {
-      timerRef.current = setInterval(() => {
-        setProgress((prevProgress) => {
-          if (prevProgress >= 100) {
-            clearInterval(timerRef.current);
-            return 0;
-          }
-          return prevProgress + 5;
-        });
-      }, 300); // Update progress every second
-      return () => {
-        clearInterval(timerRef.current);
-      };
-    }
-  }, [videoPath]);
-
-  // useEffect(() => {
-  //   // Set showProgress to true only for the first story
-  //   setShowProgress(storyId === sortedStories[0]?._id);
-  // }, [sortedStories, storyId]);
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -307,40 +266,12 @@ const StoryWidget = ({
                     )}
                   </Box>
 
-                  <Box
-                  sx={{
-                    width: '100%',
-                    height: '4px',
-                    maxHeight: '4px',
-                    position: 'absolute',
-                    top: 58,
-                    overflow: 'hidden',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
-                  >
-                    {/* Display linear progress bars for each story */}
-                    {Array.from(Array(userStoryCount).keys()).map((index) => (
-                      <LinearProgress
-                        key={index}
-                        variant="determinate"
-                        value={progress}
-                        sx={{
-                          // Calculate width dynamically based on count
-                          width: `${100 / userStoryCount}%`,
-                          height: '4px',
-                          marginRight: index < userStoryCount - 1 ? '2px' : '0',
-                          [`&.${linearProgressClasses.colorPrimary}`]: {
-                            backgroundColor: "#cacaca",
-                          },
-                          [`& .${linearProgressClasses.bar}`]: {
-                            borderRadius: 5,
-                            backgroundColor: '#fbfbfb',
-                          },
-                        }}
-                      />
-                    ))}
-                  </Box>
+                  <StoryProgressBar
+                    userStories={userStories}
+                    currentStoryIndex={currentStoryIndex}
+                    onStoryEnd={onStoryEnd}
+                  />
+                  
 
                   {/* Display Caption for the story */}
                   {description && (
