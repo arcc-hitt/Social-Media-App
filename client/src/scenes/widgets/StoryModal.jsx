@@ -13,17 +13,20 @@ const StoryModal = ({
   open,
   onClose,
   initialUserId,
+  orderedUserIds,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [slideDirection, setSlideDirection] = useState("left");
   const [isHovered, setIsHovered] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [currentProgress, setCurrentProgress] = useState(0);
   const containerRef = useRef(null);
   const { palette } = useTheme();
 
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
-  // Group stories by userId
+  // Group stories by userId and sort by createdAt
   const groupedStories = stories.reduce((acc, story) => {
     if (!acc[story.userId]) {
       acc[story.userId] = [];
@@ -31,6 +34,10 @@ const StoryModal = ({
     acc[story.userId].push(story);
     return acc;
   }, {});
+
+  Object.keys(groupedStories).forEach((userId) => {
+    groupedStories[userId].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  });
 
   // Sort stories by userId and move stories of initialUserId to the front
   const sortedStories = [];
@@ -45,7 +52,12 @@ const StoryModal = ({
   const userStories = groupedStories[initialUserId] || [];
 
   const handleNextPage = () => {
-    setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
+    if (currentStoryIndex < sortedStories.length - 1) {
+      setCurrentStoryIndex(currentStoryIndex + 1);
+    } else {
+      setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
+      setCurrentStoryIndex(0);
+    }
     setSlideDirection("left");
   };
 
@@ -53,18 +65,17 @@ const StoryModal = ({
   const totalPages = Math.ceil(stories.length / storiesPerPage);
 
   const handlePrevPage = () => {
-    setCurrentPage((prevPage) => (prevPage - 1 + totalPages) % totalPages);
+    if (currentStoryIndex > 0) {
+      setCurrentStoryIndex(currentStoryIndex - 1);
+    } else {
+      setCurrentPage((prevPage) => (prevPage - 1 + totalPages) % totalPages);
+      setCurrentStoryIndex(sortedStories.length - 1);
+    }
     setSlideDirection("right");
   };
 
   const handleStoryEnd = () => {
-    if (currentStoryIndex < userStories.length - 1) {
-      setCurrentStoryIndex(currentStoryIndex + 1);
-      handleNextPage();
-    } else {
-      handleNextPage();
-      setCurrentStoryIndex(0);
-    }
+    handleNextPage();
   };
 
   return (
@@ -119,7 +130,7 @@ const StoryModal = ({
               ref={containerRef}
             >
               {sortedStories
-                .slice(currentPage * storiesPerPage, (currentPage + 1) * storiesPerPage)
+                .slice(currentStoryIndex, currentStoryIndex + storiesPerPage)
                 .map((story, index) => (
                   <Slide
                     key={story._id}
@@ -146,9 +157,13 @@ const StoryModal = ({
                         comments={story.comments}
                         createdAt={story.createdAt}
                         modalOpen={open}
-                        currentStoryIndex={currentStoryIndex}
+                        userStories={groupedStories[sortedStories[currentStoryIndex]?.userId] || []}
+                        currentStoryIndex={currentStoryIndex % (groupedStories[sortedStories[currentStoryIndex]?.userId]?.length || 1)}
                         onStoryEnd={handleStoryEnd}
-                        userStories={userStories}
+                        // isPlaying={isPlaying}
+                        // setIsPlaying={setIsPlaying}
+                        // currentProgress={currentProgress}
+                        // setCurrentProgress={setCurrentProgress}
                       />
                     </Stack>
                   </Slide>
@@ -227,7 +242,7 @@ const StoryModal = ({
               ref={containerRef}
             >
               {sortedStories
-                .slice(currentPage * storiesPerPage, (currentPage + 1) * storiesPerPage)
+                .slice(currentStoryIndex, currentStoryIndex + storiesPerPage)
                 .map((story) => (
                   <Slide
                     key={story._id}
@@ -256,16 +271,16 @@ const StoryModal = ({
                         modalOpen={open}
                         currentStoryIndex={currentStoryIndex}
                         onStoryEnd={handleStoryEnd}
+                        userStories={groupedStories[story.userId]}
+                        isPlaying={isPlaying}
+                        setIsPlaying={setIsPlaying}
+                        currentProgress={currentProgress}
+                        setCurrentProgress={setCurrentProgress}
                       />
                     </Stack>
                   </Slide>
                 ))}
             </Box>
-            <StoryProgressBar
-              userStories={userStories}
-              currentStoryIndex={currentStoryIndex}
-              onStoryEnd={handleStoryEnd}
-            />
             <IconButton
               onClick={handleNextPage}
               sx={{

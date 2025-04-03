@@ -57,28 +57,38 @@ const MyStoryWidget = ({ userName, picturePath, videoPath, userPicturePath, curr
   const handleClose = () => setOpen(false);
 
   const handleStory = async () => {
-    const formData = new FormData();
-    formData.append("userId", _id);
-    formData.append("description", story);
+    try {
+      const formData = new FormData();
+      formData.append("userId", _id);
+      formData.append("description", story);
 
-    if (isImage) {
-      formData.append("picture", file);
-      formData.append("picturePath", file.name);
-    }
-    if (isVideo) {
-      formData.append("video", file);
-      formData.append("videoPath", file.name);
-    }
+      if (isImage) {
+        formData.append("picture", file);
+        formData.append("picturePath", file.name);
+      }
+      if (isVideo) {
+        formData.append("video", file);
+        formData.append("videoPath", file.name);
+      }
 
-    const response = await fetch(`http://localhost:3001/stories`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-    const stories = await response.json();
-    dispatch(setStories({ stories }));
-    setFile(null);
-    setStory("");
+      const response = await fetch(`http://localhost:3001/stories`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch');
+      }
+
+      const stories = await response.json();
+      dispatch(setStories({ stories }));
+      setFile(null);
+      setStory("");
+    } catch (error) {
+      console.error("Error:", error);
+      setError("Failed to upload story. Please try again.");
+    }
   };
 
   const handleUpload = (acceptedFiles, type) => {

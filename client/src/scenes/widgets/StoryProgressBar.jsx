@@ -2,11 +2,17 @@ import { LinearProgress } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 
-const StoryProgressBar = ({ userStories, currentStoryIndex, onStoryEnd }) => {
+const StoryProgressBar = ({ userStories, currentStoryIndex, onStoryEnd, isPlaying, duration, currentProgress }) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    setProgress(0);
+    if (currentProgress !== null) {
+      setProgress(currentProgress);
+    } else {
+      setProgress(0);
+    }
+    if (!isPlaying) return;
+
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -16,10 +22,10 @@ const StoryProgressBar = ({ userStories, currentStoryIndex, onStoryEnd }) => {
         }
         return prev + 1;
       });
-    }, 100);
+    }, (duration * 1000) / 100); // Use duration for interval
 
     return () => clearInterval(interval);
-  }, [currentStoryIndex, onStoryEnd]);
+  }, [currentStoryIndex, onStoryEnd, userStories, isPlaying, duration, currentProgress]);
 
   return (
     <Box

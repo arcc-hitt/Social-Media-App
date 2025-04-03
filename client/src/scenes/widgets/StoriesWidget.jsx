@@ -10,7 +10,6 @@ import MyStoryWidget from './MyStoryWidget';
 import StoryModal from './StoryModal';
 import { useTheme } from '@emotion/react';
 
-
 const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
   const dispatch = useDispatch();
   const { userName } = useSelector((state) => state.user);
@@ -33,27 +32,26 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
     setModalOpen(false);
   };
 
-  // const uniqueUserStories = Object.values(
-  //   stories.reduce((acc, story) => {
-  //     if (!acc[story.userId]) {
-  //       acc[story.userId] = story;
-  //     }
-  //     return acc;
-  //   }, {})
-  // );
   const uniqueUserStories = Array.isArray(stories)
-  ? Object.values(
-      stories.reduce((acc, story) => {
-        if (!acc[story.userId]) {
-          acc[story.userId] = story;
-        }
-        return acc;
-      }, {})
-    )
-  : [];
+    ? Object.values(
+        stories.reduce((acc, story) => {
+          if (!acc[story.userId]) {
+            acc[story.userId] = [];
+          }
+          acc[story.userId].push(story);
+          return acc;
+        }, {})
+      )
+    : [];
 
-  const currentUserStory = uniqueUserStories.some((story) => story.userId === userId);
+  uniqueUserStories.forEach((userStories) => {
+    userStories.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  });
 
+  const earliestUserStories = uniqueUserStories.map(userStories => userStories[0]);
+
+  const currentUserStory = earliestUserStories.some((story) => story.userId === userId);
+  
   const getStories = async () => {
     const response = await fetch("http://localhost:3001/stories", {
       method: "GET",
@@ -92,7 +90,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
 
   const storiesPerPage = cardsPerPage.md - 1;
 
-  const totalPages = Math.round(uniqueUserStories.length / storiesPerPage);
+  const totalPages = Math.round(earliestUserStories.length / storiesPerPage);
 
   const startIdx = currentPage * storiesPerPage;
   const endIdx = startIdx + storiesPerPage;
@@ -116,7 +114,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
 
   return (
     <>
-      {/* Stories Carousel*/}
+      {/* Story Cards Carousel*/}
       <WidgetWrapper mb="2rem">
         <div {...handlers}>
           <Box
@@ -179,7 +177,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                     </Slide>
                   )
                 ) : (
-                  uniqueUserStories
+                  earliestUserStories
                     .filter((story) => story.userId === userId)
                     .map((story) => (
                       <Slide
@@ -208,7 +206,7 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
                 )}
 
                 {/* Render other StoryWidget components */}
-                {uniqueUserStories
+                {earliestUserStories
                   .filter((story) => story.userId !== userId)
                   .slice(startIdx, endIdx)
                   .map((story) => (
@@ -264,13 +262,13 @@ const StoriesWidget = ({ userId, isProfile, userPicturePath }) => {
       </WidgetWrapper>
       {modalOpen && currentUserStory && (
         <StoryModal
-          stories={stories}
+          // stories={stories}
+          stories={modalUserId === userId ? stories.filter(story => story.userId === userId) : stories.filter(story => story.userId !== userId)}
           open={modalOpen}
           onClose={handleModalClose}
           initialUserId={modalUserId}
         />
       )}
-
     </>
   );
 };

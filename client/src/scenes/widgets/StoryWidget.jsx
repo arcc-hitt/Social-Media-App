@@ -44,6 +44,8 @@ const StoryWidget = ({
   const isLiked = Boolean(likes[loggedInUserId]);
   // const likeCount = Object.keys(likes).length;
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoDuration, setVideoDuration] = useState(10); // Default to 10 seconds
+  const [currentProgress, setCurrentProgress] = useState(0);
 
   const { palette } = useTheme();
   const primary = palette.primary.main;
@@ -120,6 +122,19 @@ const StoryWidget = ({
     setIsMuted(!isMuted);
   };
 
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) {
+      setVideoDuration(videoRef.current.duration);
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      const progress = (videoRef.current.currentTime / videoDuration) * 100;
+      setCurrentProgress(progress);
+    }
+  };
+
   return (
     <div>
       {isNonMobileScreens ? (
@@ -161,6 +176,8 @@ const StoryWidget = ({
                         autoPlay
                         ref={videoRef}
                         onLoadedData={() => setVideoLoaded(true)}
+                        onLoadedMetadata={handleLoadedMetadata}
+                        onTimeUpdate={handleTimeUpdate}
                       >
                         <source src={`http://localhost:3001/assets/${videoPath}`} type="video/mp4" />
                         Your browser does not support the video tag.
@@ -270,6 +287,9 @@ const StoryWidget = ({
                     userStories={userStories}
                     currentStoryIndex={currentStoryIndex}
                     onStoryEnd={onStoryEnd}
+                    isPlaying={isPlaying}
+                    duration={videoPath ? videoDuration : 10} // Pass duration
+                    currentProgress={videoPath ? currentProgress : null} // Pass current progress
                   />
                   
 
