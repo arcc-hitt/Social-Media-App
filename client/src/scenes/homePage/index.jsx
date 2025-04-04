@@ -1,4 +1,5 @@
-import { Box, useMediaQuery } from "@mui/material";
+import React from "react";
+import { Box, Grid, Container } from "@mui/material";
 import { useSelector } from "react-redux";
 import Navbar from "scenes/navbar";
 import UserWidget from "scenes/widgets/UserWidget";
@@ -8,42 +9,37 @@ import StoriesWidget from "scenes/widgets/StoriesWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 
 const HomePage = () => {
-  const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
 
   return (
-    <Box>
-      <Box
-        width="100%"
-        padding={isNonMobileScreens ? "2rem 2rem 2rem 0rem" : "1rem"}
-        display={isNonMobileScreens ? "flex" : "block"}
-        flexDirection={isNonMobileScreens ? "row" : "column"}
-        justifyContent="space-between"
-      >
-        <Box flexBasis={isNonMobileScreens ? "15%" : "100%"} mb="3rem">
-          <Navbar userId={_id} picturePath={picturePath}/>
-        </Box>        
-
-        <Box flexBasis={isNonMobileScreens ? "45%" : "100%"}>
-          <Box>
-            <StoriesWidget userId={_id} userPicturePath={picturePath} />
-          </Box>
-          <Box>
-            <MyPostWidget picturePath={picturePath} />
+    <Container maxWidth="xl" disableGutters>
+      {/* Box with responsive padding using MUI's sx prop and theme breakpoints */}
+      <Box sx={{ px: { xs: 1, sm: 2, md: 3, lg: 5 }, py: { xs: 1, sm: 2, md: 3 } }}>
+        <Grid container spacing={5}>
+          {/* Left Column: Navbar */}
+          <Grid item xs={12} sm={2}>
+            <Navbar userId={_id} picturePath={picturePath} />
+          </Grid>
+          {/* Center Column: Main Content */}
+          <Grid item xs={12} sm={7}>
+            <Box mb={3}>
+              <StoriesWidget userId={_id} userPicturePath={picturePath} />
+            </Box>
+            <Box mb={3}>
+              <MyPostWidget picturePath={picturePath} />
+            </Box>
             <PostsWidget userId={_id} />
-          </Box>
-        </Box>
-
-        {isNonMobileScreens && (
-          <Box flexBasis="20%">
-            {/* <AdvertWidget /> */}
-            <UserWidget userId={_id} picturePath={picturePath} />
-            <Box m="2rem 0" />
+          </Grid>
+          {/* Right Column: Additional Widgets */}
+          <Grid item xs={12} sm={3}>
+            <Box mb={3}>
+              <UserWidget userId={_id} picturePath={picturePath} />
+            </Box>
             <FriendListWidget userId={_id} />
-          </Box>
-        )}
+          </Grid>
+        </Grid>
       </Box>
-    </Box>
+    </Container>
   );
 };
 
